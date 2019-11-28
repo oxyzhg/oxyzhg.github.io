@@ -181,19 +181,6 @@ code
     &:after
       clear: both
 
-  &:hover 
-    .btn-copy
-      opacity: 1
-
-  .btn-copy
-    font-size: 1.2rem
-    position: absolute
-    right: 20px
-    opacity: 0
-    transition: opacity 0.2s ease-in
-    &:hover
-      color: $color-accent-1
-
   pre
     padding: 0
     border: none
@@ -204,6 +191,9 @@ code
 
   td.gutter
     text-align: right
+
+  td.code:only-of-type
+    height: 2em
 
   .line
     height: 22px
