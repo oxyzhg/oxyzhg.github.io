@@ -4,15 +4,66 @@ author: Kq
 date: 2019-12-14 10:20:18
 categories:
 tags:
+  - microfrontend
+  - 微前端
+  - 架构
 ---
 
-## 参考
+## 什么是微前端
 
-- [可能是你见过最完善的微前端解决方案](https://zhuanlan.zhihu.com/p/78362028)
-- [面向大型工作台的微前端解决方案 icestark](https://zhuanlan.zhihu.com/p/88449415)
-- [实施前端微服务化的六七种方式](https://zhuanlan.zhihu.com/p/39102712)
-- [网易云控制台微前端探索实践](https://zhuanlan.zhihu.com/p/78152485)
-- [每日优鲜供应链前端团队微前端改造](https://juejin.im/post/5d7f702ce51d4561f777e258)
-- [网易严选企业级微前端解决方案与落地实践](https://mp.weixin.qq.com/s/x2N-Y5xZV-XbrqxDT_wLKA)
-- [微前端的核心价值](https://zhuanlan.zhihu.com/p/95085796)
-- [UCF-Web 整体架构设计和介绍](https://www.yuque.com/ucf-web/book/ct51hg)
+最近业界越来越关注复杂的现代化 Web 开发需要怎样的整体架构和组织结构这个问题。于是我们开始看到单体前端正在分解为更小、更简单的模块，这些模块可以各自独立开发、测试和部署，而它们组合在一起仍然对客户表现为一件单一完整的产品。[1]
+
+> 微前端是一种架构风格，其中众多独立交付的前端应用组合成一个大型整体。
+
+这是个过程解耦与结果聚合的过程，我把它概括为：
+
+- 代码解耦，应用聚合；
+- 功能解耦，产品聚合；
+- 开发解耦，交付聚合；
+- 项目解耦，运营聚合。
+
+ThoughtWorks Technology Rader 从 2016.11 期开始，将微前端列入“ACCESS”之列，随后又列入“TRIAL”阶段，在最新的 2019.4 期中，微前端技术已然成为“ADOPT”阶段的一员，发展极其迅速。发展至今，国内很多大厂都先后出现企业级微前端解决方案和落地实践。[2]
+
+## 微前端技术优势
+
+传统 SPA 开发模式，发展至今面临的问题：
+
+- 随着产品迭代，发展到一定程度，容易成为巨石应用
+- 技术栈不断升级、变迁，多框架多版本、同框架多版本共存的情况难以避免
+- 跨团队合作开发困难
+
+微前端架构的优势：
+
+- 独立开发(技术栈无关)
+- 独立部署
+- 独立运行
+
+微前端应运而生，可以对项目进行合理拆分、组合，以解决大型项目解耦和多版本共存的问题。[3]
+
+## 微前端解决方案
+
+## 大厂企业级解决方案
+
+### 网易严选团队
+
+在网易严选，微前端不仅仅是一个框架或者说一层外壳，而是一整套包括规范、工具、框架、配置中心、应用监控等一系列相关功能在内的前端应用架构体系。根据不同的需求和应用场景，针对性地做一个个性化开发和改造，从而在业务场景中提高生产力。
+
+![网易严选微前端总体架构图](/images/网易严选微前端总体架构图.png)
+
+网易严选微前端架构技术特点：
+
+1. 应用开发链路闭环
+
+## 参考文章
+
+1. [大前端时代下的微前端架构：实现增量升级、代码解耦、独立部署](https://www.infoq.cn/article/03*BeU3zQegIbIytRsX9)
+2. [Techniques Micro frontends](https://www.thoughtworks.com/radar/techniques/micro-frontends)
+3. [网易严选企业级微前端解决方案与落地实践](https://mp.weixin.qq.com/s/x2N-Y5xZV-XbrqxDT_wLKA)
+4. [可能是你见过最完善的微前端解决方案](https://zhuanlan.zhihu.com/p/78362028)
+5. [面向大型工作台的微前端解决方案 icestark](https://zhuanlan.zhihu.com/p/88449415)
+6. [实施前端微服务化的六七种方式](https://zhuanlan.zhihu.com/p/39102712)
+7. [网易云控制台微前端探索实践](https://zhuanlan.zhihu.com/p/78152485)
+8. [每日优鲜供应链前端团队微前端改造](https://juejin.im/post/5d7f702ce51d4561f777e258)
+9. [UCF-Web 整体架构设计和介绍](https://www.yuque.com/ucf-web/book/ct51hg)
+10. [微前端的核心价值](https://zhuanlan.zhihu.com/p/95085796)
+11. [微前端的那些事儿](https://microfrontends.cn/)
