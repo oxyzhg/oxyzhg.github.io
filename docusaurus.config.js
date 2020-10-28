@@ -6,13 +6,13 @@ const baseConfig = {
 
 module.exports = {
   title: 'Oxyzhg',
-  tagline: 'The tagline of my site',
+  tagline: 'Anymore!',
   url: baseConfig.WEBSITE,
-  baseUrl: '/demo/',
+  baseUrl: '/',
   onBrokenLinks: 'throw',
   favicon: 'img/favicon.ico',
-  organizationName: 'oxyzhg', // Usually your GitHub org/user name.
-  projectName: 'oxyzhg.github.io', // Usually your repo name.
+  organizationName: 'oxyzhg',
+  projectName: 'oxyzhg.github.io',
   themeConfig: {
     navbar: {
       title: 'Oxyzhg',
@@ -21,12 +21,12 @@ module.exports = {
         src: 'img/moon.svg',
       },
       items: [
-        {
-          to: 'docs/',
-          activeBasePath: 'docs',
-          label: 'Docs',
-          position: 'left',
-        },
+        // {
+        //   to: 'docs/',
+        //   activeBasePath: 'docs',
+        //   label: 'Docs',
+        //   position: 'left',
+        // },
         {
           href: baseConfig.GITHUB,
           label: 'GitHub',
@@ -41,8 +41,8 @@ module.exports = {
           title: 'Docs',
           items: [
             {
-              label: 'Style Guide',
-              to: 'docs/',
+              label: 'Algorithms',
+              href: 'https://oxyzhg.cn/leetcode',
             },
           ],
         },
@@ -50,8 +50,8 @@ module.exports = {
           title: 'Community',
           items: [
             {
-              label: 'Stack Overflow',
-              href: 'https://stackoverflow.com/questions/tagged/docusaurus',
+              label: '语雀',
+              href: 'https://www.yuque.com/oxyzhg',
             },
           ],
         },
@@ -60,7 +60,7 @@ module.exports = {
           items: [
             {
               label: 'GitHub',
-              href: 'https://github.com/facebook/docusaurus',
+              href: 'https://github.com/oxyzhg',
             },
           ],
         },
@@ -74,18 +74,17 @@ module.exports = {
       {
         docs: {
           sidebarPath: require.resolve('./sidebars.js'),
-          // Please change this to your repo.
-          editUrl: 'https://github.com/facebook/docusaurus/edit/master/website/',
+          editUrl: 'https://github.com/oxyzhg/oxyzhg.github.io/edit/main/docs/',
         },
         blog: {
           routeBasePath: '/',
-          blogTitle: 'My Blog!',
-          blogDescription: 'A docusaurus powered blog!',
+          blogTitle: 'My Blog!!',
+          blogDescription:
+            'Reading makes a full man, conference a ready man, and writing an exact man!',
           blogSidebarCount: 5,
           blogSidebarTitle: 'Posts',
           showReadingTime: true,
           postsPerPage: 10,
-          // Please change this to your repo.
           editUrl: 'https://github.com/oxyzhg/oxyzhg.github.io/edit/main/blog/',
         },
         theme: {
