@@ -47,11 +47,11 @@ module.exports = {
           ],
         },
         {
-          title: 'Community',
+          title: 'Projects',
           items: [
             {
-              label: '语雀',
-              href: 'https://www.yuque.com/oxyzhg',
+              label: 'Kala Table',
+              href: 'https://oxyzhg.cn/kala-table',
             },
           ],
         },
@@ -61,6 +61,10 @@ module.exports = {
             {
               label: 'GitHub',
               href: 'https://github.com/oxyzhg',
+            },
+            {
+              label: '语雀',
+              href: 'https://www.yuque.com/oxyzhg',
             },
           ],
         },
