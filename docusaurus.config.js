@@ -17,8 +17,8 @@ module.exports = {
     navbar: {
       title: 'Oxyzhg',
       logo: {
-        alt: 'My Site Logo',
-        src: 'img/logo.svg',
+        alt: 'Logo',
+        src: 'img/moon.svg',
       },
       items: [
         {
@@ -27,7 +27,6 @@ module.exports = {
           label: 'Docs',
           position: 'left',
         },
-        { to: 'blog', label: 'Blog', position: 'left' },
         {
           href: baseConfig.GITHUB,
           label: 'GitHub',
@@ -45,10 +44,6 @@ module.exports = {
               label: 'Style Guide',
               to: 'docs/',
             },
-            {
-              label: 'Second Doc',
-              to: 'docs/doc2/',
-            },
           ],
         },
         {
@@ -58,23 +53,11 @@ module.exports = {
               label: 'Stack Overflow',
               href: 'https://stackoverflow.com/questions/tagged/docusaurus',
             },
-            {
-              label: 'Discord',
-              href: 'https://discordapp.com/invite/docusaurus',
-            },
-            {
-              label: 'Twitter',
-              href: 'https://twitter.com/docusaurus',
-            },
           ],
         },
         {
           title: 'More',
           items: [
-            {
-              label: 'Blog',
-              to: 'blog',
-            },
             {
               label: 'GitHub',
               href: 'https://github.com/facebook/docusaurus',
@@ -95,9 +78,15 @@ module.exports = {
           editUrl: 'https://github.com/facebook/docusaurus/edit/master/website/',
         },
         blog: {
+          routeBasePath: '/',
+          blogTitle: 'My Blog!',
+          blogDescription: 'A docusaurus powered blog!',
+          blogSidebarCount: 5,
+          blogSidebarTitle: 'Posts',
           showReadingTime: true,
+          postsPerPage: 10,
           // Please change this to your repo.
-          editUrl: 'https://github.com/facebook/docusaurus/edit/master/website/blog/',
+          editUrl: 'https://github.com/oxyzhg/oxyzhg.github.io/edit/main/blog/',
         },
         theme: {
           customCss: require.resolve('./src/css/custom.css'),
