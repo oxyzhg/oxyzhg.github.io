@@ -5,7 +5,7 @@ const baseConfig = {
 };
 
 module.exports = {
-  title: 'Oxyzhg',
+  title: '溪月博客',
   tagline: 'Anymore!',
   url: baseConfig.WEBSITE,
   baseUrl: '/',
@@ -82,7 +82,7 @@ module.exports = {
         },
         blog: {
           routeBasePath: '/',
-          blogTitle: 'My Blog!!',
+          blogTitle: 'Home!',
           blogDescription:
             'Reading makes a full man, conference a ready man, and writing an exact man!',
           blogSidebarCount: 5,

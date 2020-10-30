@@ -1,14 +1,8 @@
 ---
-slug: hola
-title: Vue 组件生命周期
-# author: Gao Wei
-# author_title: Docusaurus Core Team
-# author_url: https://github.com/wgao19
-# author_image_url: https://avatars1.githubusercontent.com/u/2055384?v=4
-tags: [hola, docusaurus]
+slug: vue-lifecycles
+title: Vue组件生命周期
+tags: [vue, 生命周期]
 ---
-
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque elementum dignissim ultricies. Fusce rhoncus ipsum tempor eros aliquam consequat. Lorem ipsum dolor sit amet
 
 <!--truncate-->
 
