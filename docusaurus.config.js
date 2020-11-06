@@ -41,6 +41,10 @@ module.exports = {
           title: 'Docs',
           items: [
             {
+              label: 'Favorites',
+              to: 'notes/favorites',
+            },
+            {
               label: 'Algorithms',
               href: 'https://oxyzhg.cn/leetcode',
             },
@@ -77,7 +81,8 @@ module.exports = {
       '@docusaurus/preset-classic',
       {
         docs: {
-          sidebarPath: require.resolve('./sidebars.js'),
+          routeBasePath: 'notes',
+          // sidebarPath: require.resolve('./sidebars.js'),
           editUrl: 'https://github.com/oxyzhg/oxyzhg.github.io/edit/main/docs/',
         },
         blog: {

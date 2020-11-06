@@ -5,5 +5,9 @@ module.exports = {
       label: 'Docusaurus',
       items: ['doc1'],
     },
+    {
+      type: 'doc',
+      id: 'favorites/readme'
+    }
   ],
 };
