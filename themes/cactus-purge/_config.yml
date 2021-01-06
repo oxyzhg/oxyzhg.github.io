@@ -17,9 +17,9 @@ nav:
   home: /
   articles: /archives/
   category: /categories/
-  tag: /tags/
-  # about: /about/
-  projects: http://github.com/oxyzhg
+  # tag: /tags/
+  # projects: http://github.com/oxyzhg
+  about: /about/
   search: /search/
 
 
