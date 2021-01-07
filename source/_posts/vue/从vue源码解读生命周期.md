@@ -1,11 +1,13 @@
 ---
-title: vue-lifecycle-with-source
+title: 从vue源码解读生命周期
 author: Kq
-date: 2021-01-06 19:28:08
-categories: 源码
+categories: vue
 tags:
   - vue
-  - source-code
+  - 源码
+  - 生命周期
+abbrlink: 5f595b09
+date: 2020-07-04 16:14:00
 ---
 
 ## 前言
