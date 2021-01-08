@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta name="description" content="在 Compiler 和 Compilation 的工作流程中耗时分析：  对于 Compiler 实例而言，耗时最长的显然是生成编译过程实例后的 make 阶段，在这个阶段里，会执行模块编译到优化的完整过程。 对于 Compilation 实例的工作流程来说，不同的项目和配置各有不同，但总体而言，编译模块和后续优化阶段的生成产物并压缩代码的过程都是比较耗时的。  不同项目的构建，在整个流程的前期">
+<meta property="og:type" content="article">
+<meta property="og:title" content="webpack构建优化分析">
+<meta property="og:url" content="https://oxyzhg.cn/post/97c23243/index.html">
+<meta property="og:site_name" content="Oxyzhg">
+<meta property="og:description" content="在 Compiler 和 Compilation 的工作流程中耗时分析：  对于 Compiler 实例而言，耗时最长的显然是生成编译过程实例后的 make 阶段，在这个阶段里，会执行模块编译到优化的完整过程。 对于 Compilation 实例的工作流程来说，不同的项目和配置各有不同，但总体而言，编译模块和后续优化阶段的生成产物并压缩代码的过程都是比较耗时的。  不同项目的构建，在整个流程的前期">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2020-12-11T09:04:45.000Z">
+<meta property="article:modified_time" content="2021-01-08T02:08:34.621Z">
+<meta property="article:author" content="Oxyzhg">
+<meta property="article:tag" content="源码">
+<meta property="article:tag" content="webpack">
+<meta property="article:tag" content="性能优化">
+<meta name="twitter:card" content="summary">
+    
+    
+        
+          
+              <link rel="shortcut icon" href="/images/favicon.ico">
+          
+        
+        
+          
+            <link rel="icon" type="image/png" href="/images/logo.png" sizes="192x192">
+          
+        
+        
+          
+            <link rel="apple-touch-icon" sizes="180x180" href="/images/logo.png">
+          
+        
+    
+    <!-- title -->
+    <title>webpack构建优化分析</title>
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+      
+<link rel="stylesheet" href="/css/rtl.css">
+
+    
+    <!-- rss -->
+    
+    
+<meta name="generator" content="Hexo 5.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/archives/">Writing</a></li>
+         
+          <li><a href="/categories/">Category</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/search/">Search</a></li>
+        
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" href="/post/20e680d8/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" href="/post/1a943f3e/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://oxyzhg.cn/post/97c23243/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://oxyzhg.cn/post/97c23243/&text=webpack构建优化分析"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://oxyzhg.cn/post/97c23243/&title=webpack构建优化分析"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://oxyzhg.cn/post/97c23243/&is_video=false&description=webpack构建优化分析"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=webpack构建优化分析&body=Check out this article: https://oxyzhg.cn/post/97c23243/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://oxyzhg.cn/post/97c23243/&title=webpack构建优化分析"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://oxyzhg.cn/post/97c23243/&title=webpack构建优化分析"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://oxyzhg.cn/post/97c23243/&title=webpack构建优化分析"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://oxyzhg.cn/post/97c23243/&title=webpack构建优化分析"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://oxyzhg.cn/post/97c23243/&name=webpack构建优化分析&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://oxyzhg.cn/post/97c23243/&t=webpack构建优化分析"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BC%96%E8%AF%91%E9%98%B6%E6%AE%B5%E4%BC%98%E5%8C%96%E5%88%86%E6%9E%90"><span class="toc-number">1.</span> <span class="toc-text">编译阶段优化分析</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%87%8F%E5%B0%91%E6%89%A7%E8%A1%8C%E7%BC%96%E8%AF%91%E7%9A%84%E6%A8%A1%E5%9D%97"><span class="toc-number">1.1.</span> <span class="toc-text">减少执行编译的模块</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#IgnorePlugin"><span class="toc-number">1.1.1.</span> <span class="toc-text">IgnorePlugin</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%8C%89%E9%9C%80%E5%BC%95%E5%85%A5%E7%B1%BB%E5%BA%93%E6%A8%A1%E5%9D%97"><span class="toc-number">1.1.2.</span> <span class="toc-text">按需引入类库模块</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#DllPlugin"><span class="toc-number">1.1.3.</span> <span class="toc-text">DllPlugin</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Externals"><span class="toc-number">1.1.4.</span> <span class="toc-text">Externals</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8F%90%E5%8D%87%E5%8D%95%E4%B8%AA%E6%A8%A1%E5%9D%97%E6%9E%84%E5%BB%BA%E7%9A%84%E9%80%9F%E5%BA%A6"><span class="toc-number">1.2.</span> <span class="toc-text">提升单个模块构建的速度</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#include-exclude"><span class="toc-number">1.2.1.</span> <span class="toc-text">include&#x2F;exclude</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#noParse"><span class="toc-number">1.2.2.</span> <span class="toc-text">noParse</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#SourceMap"><span class="toc-number">1.2.3.</span> <span class="toc-text">SourceMap</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Resolve"><span class="toc-number">1.2.4.</span> <span class="toc-text">Resolve</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B9%B6%E8%A1%8C%E6%9E%84%E5%BB%BA%E4%BB%A5%E6%8F%90%E5%8D%87%E6%80%BB%E4%BD%93%E6%95%88%E7%8E%87"><span class="toc-number">1.3.</span> <span class="toc-text">并行构建以提升总体效率</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#thread-loader"><span class="toc-number">1.3.1.</span> <span class="toc-text">thread-loader</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%89%93%E5%8C%85%E9%98%B6%E6%AE%B5%E4%BC%98%E5%8C%96%E5%88%86%E6%9E%90"><span class="toc-number">2.</span> <span class="toc-text">打包阶段优化分析</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8F%90%E5%8D%87%E5%BD%93%E5%89%8D%E4%BB%BB%E5%8A%A1%E7%9A%84%E5%B7%A5%E4%BD%9C%E6%95%88%E7%8E%87"><span class="toc-number">2.1.</span> <span class="toc-text">提升当前任务的工作效率</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%9D%A2%E5%90%91-JS-%E7%9A%84%E5%8E%8B%E7%BC%A9%E5%B7%A5%E5%85%B7"><span class="toc-number">2.1.1.</span> <span class="toc-text">面向 JS 的压缩工具</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%9D%A2%E5%90%91-CSS-%E7%9A%84%E5%8E%8B%E7%BC%A9%E5%B7%A5%E5%85%B7"><span class="toc-number">2.1.2.</span> <span class="toc-text">面向 CSS 的压缩工具</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8F%90%E5%8D%87%E5%90%8E%E7%BB%AD%E7%8E%AF%E8%8A%82%E7%9A%84%E5%B7%A5%E4%BD%9C%E6%95%88%E7%8E%87"><span class="toc-number">2.2.</span> <span class="toc-text">提升后续环节的工作效率</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Split-Chunks"><span class="toc-number">2.2.1.</span> <span class="toc-text">Split Chunks</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Tree-Shaking"><span class="toc-number">2.2.2.</span> <span class="toc-text">Tree Shaking</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BC%98%E5%8C%96%E6%96%B9%E6%A1%88%E6%80%BB%E7%BB%93"><span class="toc-number">3.</span> <span class="toc-text">优化方案总结</span></a></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        webpack构建优化分析
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">Kq</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2020-12-11T09:04:45.000Z" itemprop="datePublished">2020-12-11</time>
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fas fa-archive"></i>
+        <a class="category-link" href="/categories/%E5%89%8D%E7%AB%AF%E5%B7%A5%E7%A8%8B%E5%8C%96/">前端工程化</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link-link" href="/tags/webpack/" rel="tag">webpack</a>, <a class="tag-link-link" href="/tags/%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/" rel="tag">性能优化</a>, <a class="tag-link-link" href="/tags/%E6%BA%90%E7%A0%81/" rel="tag">源码</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <p>在 Compiler 和 Compilation 的工作流程中耗时分析：</p>
+<ul>
+<li>对于 Compiler 实例而言，耗时最长的显然是生成编译过程实例后的 make 阶段，在这个阶段里，会执行模块编译到优化的完整过程。</li>
+<li>对于 Compilation 实例的工作流程来说，不同的项目和配置各有不同，但总体而言，编译模块和后续优化阶段的生成产物并压缩代码的过程都是比较耗时的。</li>
+</ul>
+<p>不同项目的构建，在整个流程的前期初始化阶段与最后的产物生成阶段的构建时间区别不大。真正影响整个构建效率的还是 Compilation 实例的处理过程，这一过程又可分为两个阶段：编译模块和优化处理。</p>
+<h2 id="编译阶段优化分析"><a href="#编译阶段优化分析" class="headerlink" title="编译阶段优化分析"></a>编译阶段优化分析</h2><p>编译模块阶段所耗的时间是从单个入口点开始，编译每个模块的时间的总和。要提升这一阶段的构建效率，大致可以分为三个方向：</p>
+<ol>
+<li>减少执行编译的模块</li>
+<li>提升单个模块构建的速度</li>
+<li>并行构建以提升总体效率</li>
+</ol>
+<h3 id="减少执行编译的模块"><a href="#减少执行编译的模块" class="headerlink" title="减少执行编译的模块"></a>减少执行编译的模块</h3><p>如果一个项目每次构建都需要编译 1000 个模块，但是通过分析后发现其中有 500 个不需要编译，显而易见，经过优化后，构建效率可以大幅提升。</p>
+<h4 id="IgnorePlugin"><a href="#IgnorePlugin" class="headerlink" title="IgnorePlugin"></a>IgnorePlugin</h4><p>有的依赖包，除了项目所需的模块内容外，还会附带一些多余的模块。典型的例子是 moment 这个包，一般情况下在构建时会自动引入其 locale 目录下的多国语言包，但对于大多数情况而言，项目中只需要引入本国语言包即可。而 Webpack 提供的 IgnorePlugin 即可在构建模块时直接剔除那些需要被排除的模块，从而提升构建模块的速度，并减少产物体积。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> config = &#123;</span><br><span class="line">  plugins: [</span><br><span class="line">    <span class="keyword">new</span> webpack.IgnorePlugin(&#123;</span><br><span class="line">      resourceRegExp: <span class="regexp">/^\.\/locale$/</span>,</span><br><span class="line">      contextRegExp: <span class="regexp">/moment$/</span>,</span><br><span class="line">    &#125;),</span><br><span class="line">  ],</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<h4 id="按需引入类库模块"><a href="#按需引入类库模块" class="headerlink" title="按需引入类库模块"></a>按需引入类库模块</h4><p>这种方式一般适用于工具类库性质的依赖包的优化，典型例子是 lodash 依赖包。要解决这个问题，效果最佳的方式是在导入声明时只导入依赖包内的特定模块。除了在导入时声明特定模块之外，还可以使用 babel-plugin-lodash 或 babel-plugin-import 等插件达到同样的效果。</p>
+<blockquote>
+<p>关于 Tree Shaking 这里要注意两点：1. 该功能依赖 ES Module 模块化方案；2.该功能在优化阶段进行，换句话说，这并不能对模块编译阶段起作用。</p>
+</blockquote>
+<h4 id="DllPlugin"><a href="#DllPlugin" class="headerlink" title="DllPlugin"></a>DllPlugin</h4><p>DllPlugin 的核心思想是将项目依赖的框架等模块单独构建打包，与普通构建流程区分开。例如，原先一个依赖 react 与 react-dom 的项目，经过 DllPlugin 和 DllReferencePlugin 优化后，再次构建的效率会得到极大的提高。</p>
+<h4 id="Externals"><a href="#Externals" class="headerlink" title="Externals"></a>Externals</h4><p>Webpack 配置中的 externals 和 DllPlugin 解决的是同一类问题：将依赖的框架等模块从构建过程中移除。它们的区别在于：</p>
+<ol>
+<li>在配置方面，externals 更简单，而 DllPlugin 需要独立的配置文件。</li>
+<li>DllPlugin 包含了依赖包的独立构建流程，而 externals 配置中不包含依赖框架的生成方式，通常使用已传入 CDN 的依赖包。</li>
+<li>externals 配置的依赖包需要单独指定依赖模块的加载方式：全局对象、CommonJS、AMD 等。</li>
+<li>在引用依赖包的子模块时，DllPlugin 无须更改，而 externals 则会将子模块打入项目包中。</li>
+</ol>
+<h3 id="提升单个模块构建的速度"><a href="#提升单个模块构建的速度" class="headerlink" title="提升单个模块构建的速度"></a>提升单个模块构建的速度</h3><p>提升编译阶段效率的第二个方向，是在保持构建模块数量不变的情况下，提升单个模块构建的速度。具体来说，是通过减少构建单个模块时的一些处理逻辑来提升速度。</p>
+<h4 id="include-exclude"><a href="#include-exclude" class="headerlink" title="include/exclude"></a>include/exclude</h4><p>include 的用途是只对符合条件的模块使用指定 Loader 进行转换处理。而 exclude 则相反，不对特定条件的模块使用该 Loader. 例如不使用 babel-loader 处理 node_modules 中的模块。</p>
+<h4 id="noParse"><a href="#noParse" class="headerlink" title="noParse"></a>noParse</h4><p>module.noParse 是在上述 include/exclude 的基础上，进一步省略了使用默认 js 模块编译器进行编译。</p>
+<h4 id="SourceMap"><a href="#SourceMap" class="headerlink" title="SourceMap"></a>SourceMap</h4><p>对于生产环境的代码构建而言，会根据项目实际情况判断是否开启 Source Map。在开启 Source Map 的情况下，优先选择与源文件分离的类型，例如 “source-map”。</p>
+<h4 id="Resolve"><a href="#Resolve" class="headerlink" title="Resolve"></a>Resolve</h4><p>Webpack 中的 resolve 配置制定的是在构建时指定查找模块文件的规则，例如：</p>
+<ul>
+<li><strong>resolve.modules</strong>：指定查找模块的目录范围。</li>
+<li><strong>resolve.extensions</strong>：指定查找模块的文件类型范围。</li>
+<li><strong>resolve.mainFields</strong>：指定查找模块的 package.json 中主文件的属性名。</li>
+<li><strong>resolve.symlinks</strong>：指定在查找模块时是否处理软连接。</li>
+</ul>
+<p>这些规则在处理每个模块时都会有所应用，因此尽管对小型项目的构建速度来说影响不大，但对于大型的模块众多的项目而言，这些配置的变化就可能产生客观的构建时长区别。</p>
+<h3 id="并行构建以提升总体效率"><a href="#并行构建以提升总体效率" class="headerlink" title="并行构建以提升总体效率"></a>并行构建以提升总体效率</h3><h4 id="thread-loader"><a href="#thread-loader" class="headerlink" title="thread-loader"></a>thread-loader</h4><p>它作用于模块编译的 Loader 上，用于在特定 Loader 的编译过程中，以开启多进程的方式加速编译。</p>
+<h2 id="打包阶段优化分析"><a href="#打包阶段优化分析" class="headerlink" title="打包阶段优化分析"></a>打包阶段优化分析</h2><p>Webpack 编译过程可以细分为 12 个阶段：生成依赖项、生成 Chunk、优化 Module、优化 Chunk、优化 Tree、优化 ChunkModules、生成 Module Ids、生成 Chunk Ids、生成 Hash、生成 ModuleAssets、生成 ChunkAssets、优化 Assets。每个任务依次对数据进行一定的处理，并将结果传递给下一任务。</p>
+<p>因此，这一阶段的优化也可以分为两个不同的方向：</p>
+<ol>
+<li>针对某些任务，使用效率更高的工具或配置项，从而<strong>提升当前任务的工作效率</strong>。</li>
+<li>提升特定任务的优化效果，以减少传递给下一任务的数据量，从而<strong>提升后续环节的工作效率</strong>。</li>
+</ol>
+<h3 id="提升当前任务的工作效率"><a href="#提升当前任务的工作效率" class="headerlink" title="提升当前任务的工作效率"></a>提升当前任务的工作效率</h3><p>一般在项目的优化阶段，主要耗时的任务有两个：一个是生成 ChunkAssets，即根据 Chunk 信息<strong>生成 Chunk 的产物代码</strong>；另一个是优化 Assets，即<strong>压缩 Chunk 产物代码</strong>。</p>
+<p>第一个任务主要在 Webpack 引擎内部的模块中处理，相对而言优化手段较少，主要集中在利用缓存方面。而在压缩 Chunk 产物代码的过程中会用到一些第三方插件，选择不同的插件，以及插件中的不同配置都可能会对其中的效率产生影响。</p>
+<h4 id="面向-JS-的压缩工具"><a href="#面向-JS-的压缩工具" class="headerlink" title="面向 JS 的压缩工具"></a>面向 JS 的压缩工具</h4><p>Webpack4 内置了 TerserWebpackPlugin 作为 JS 压缩工具。（之前的版本是 UglifyJSWebpackPlugin）</p>
+<p>TerserWebpackPlugin 工作过程中，对执行效率产生影响的配置主要分为 3 个方面：</p>
+<ol>
+<li><strong>Cache 选项</strong>：默认开启，使用缓存能够极大程度上提升再次构建时的工作效率。</li>
+<li><strong>Parallel 选项</strong>：默认开启，并发选项在大多数情况下能够提升该插件的工作效率，但具体提升的程度则因项目而异。在小型项目中，多进程通信的额外消耗可能会抵消其带来的益处。</li>
+<li><strong>terserOptions 选项</strong>：即 Terser 工具中的 <a target="_blank" rel="noopener" href="https://github.com/terser/terser#minify-options">minify</a> 选项集合。这些选项是对具体压缩处理过程产生影响的配置项。</li>
+</ol>
+<p>我们主要来看其中的 compress 和 mangle 选项，不同选项的压缩结果如下面的代码所示：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//源代码./src/example-terser-opts.js</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">HelloWorld</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="keyword">const</span> foo = <span class="string">&#x27;1234&#x27;</span></span><br><span class="line">  <span class="built_in">console</span>.log(HelloWorld, foo)</span><br><span class="line">&#125;</span><br><span class="line">HelloWorld()</span><br><span class="line"><span class="comment">//默认配置项compress=&#123;&#125;, mangle=true的压缩后代码</span></span><br><span class="line"><span class="function"><span class="keyword">function</span>(<span class="params">e,t</span>)</span>&#123;!<span class="function"><span class="keyword">function</span> <span class="title">e</span>(<span class="params"></span>)</span>&#123;<span class="built_in">console</span>.log(e,<span class="string">&quot;1234&quot;</span>)&#125;()&#125;&#125;);</span><br><span class="line"><span class="comment">//compress=false的压缩后代码</span></span><br><span class="line"><span class="function"><span class="keyword">function</span>(<span class="params">e,r</span>)</span>&#123;<span class="function"><span class="keyword">function</span> <span class="title">t</span>(<span class="params"></span>)</span>&#123;<span class="keyword">var</span> e=<span class="string">&quot;1234&quot;</span>;<span class="built_in">console</span>.log(t,e)&#125;t()&#125;&#125;);</span><br><span class="line"><span class="comment">//mangle=false的压缩代码</span></span><br><span class="line"><span class="function"><span class="keyword">function</span>(<span class="params"><span class="built_in">module</span>,<span class="built_in">exports</span></span>)</span>&#123;!<span class="function"><span class="keyword">function</span> <span class="title">HelloWorld</span>(<span class="params"></span>)</span>&#123;<span class="built_in">console</span>.log(HelloWorld,<span class="string">&quot;1234&quot;</span>)&#125;()&#125;&#125;);</span><br><span class="line"><span class="comment">//compress=false，mangle=false的压缩后代码</span></span><br><span class="line"><span class="function"><span class="keyword">function</span>(<span class="params"><span class="built_in">module</span>,<span class="built_in">exports</span></span>)</span>&#123;<span class="function"><span class="keyword">function</span> <span class="title">HelloWorld</span>(<span class="params"></span>)</span>&#123;<span class="keyword">var</span> foo=<span class="string">&quot;1234&quot;</span>;<span class="built_in">console</span>.log(HelloWorld,foo)&#125;HelloWorld()&#125;&#125;);</span><br></pre></td></tr></table></figure>
+<p>从上面例子可以看出：</p>
+<ul>
+<li><strong>compress</strong> 参数的作用是执行特定的压缩策略，例如省略变量赋值的语句，从而将变量的值直接替换到引入变量的位置上，减小代码体积。而当 compress 参数为 false 时，这类压缩策略不再生效，对压缩质量的影响有限。</li>
+<li><strong>mangle</strong> 参数的作用是对源代码中的变量与函数名称进行压缩，对代码压缩的效果影响非常大。</li>
+</ul>
+<h4 id="面向-CSS-的压缩工具"><a href="#面向-CSS-的压缩工具" class="headerlink" title="面向 CSS 的压缩工具"></a>面向 CSS 的压缩工具</h4><p>CSS 同样有几种压缩工具可供选择：</p>
+<ul>
+<li>OptimizeCSSAssetsPlugin（在 Create-React-App 中使用）</li>
+<li>OptimizeCSSNanoPlugin（在 VUE-CLI 中使用）</li>
+<li>CSSMinimizerWebpackPlugin（2020 年 Webpack 社区新发布的 CSS 压缩插件）</li>
+</ul>
+<p>这三个插件在压缩 CSS 代码功能方面，都默认基于 <a target="_blank" rel="noopener" href="https://cssnano.co/">cssnano</a> 实现，因此在压缩质量方面没有什么差别。在压缩效率方面，最新发布的 CSSMinimizerWebpackPlugin 支持了缓存和多进程，这是另外两个工具不具备的。</p>
+<h3 id="提升后续环节的工作效率"><a href="#提升后续环节的工作效率" class="headerlink" title="提升后续环节的工作效率"></a>提升后续环节的工作效率</h3><p>优化阶段的另一类优化方向是通过对本环节的处理减少后续环节处理内容，以便提升后续环节的工作效率。比如：Split Chunks（分包） 和 Tree Shaking（摇树）。</p>
+<h4 id="Split-Chunks"><a href="#Split-Chunks" class="headerlink" title="Split Chunks"></a>Split Chunks</h4><blockquote>
+<p>Split Chunks（分包）是指在 Chunk 生成之后，将原先以入口点来划分的 Chunks 根据一定的规则（例如异步引入或分离公共依赖等原则），分离出子 Chunk 的过程。</p>
+</blockquote>
+<p>Split Chunks 有诸多优点，例如有利于缓存命中、有利于运行时的持久化文件缓存等。其中有一类情况能提升后续环节的工作效率，即通过分包来抽离多个入口点引用的公共依赖。</p>
+<p>Webpack4 内置了 SplitChunksPlugin 插件，该插件在 production 模式下默认启用。其默认的分包规则只会分离动态引入的模块，在处理动态引入的模块时能够自动分离其中的公共依赖。而对于多入口静态引用相同依赖包的情况，则不会处理分包，因此我们需要配置 <code>chunks:&#39;all&#39;</code> 将所有的依赖情况都进行分包处理，从而减少了重复引入相同模块代码的情况。</p>
+<h4 id="Tree-Shaking"><a href="#Tree-Shaking" class="headerlink" title="Tree Shaking"></a>Tree Shaking</h4><blockquote>
+<p>Tree Shaking（摇树）是指在构建打包过程中，移除那些引入但未被使用的代码（Dead-code elimination）。</p>
+</blockquote>
+<p>注意几点：</p>
+<ol>
+<li><strong>ES Module</strong>：只有通过 ESM 导入导出的模块才能被 Tree Shaking 命中，这得益于 ESM 能在编译阶段对依赖进行静态分析。</li>
+<li><strong>引入方式</strong>：以 default 方式引入的模块，无法被 Tree Shaking 命中；而引入单个导出对象的方式，无论是使用 <code>import * as xxx</code>  的语法，还是 <code>import &#123;xxx&#125;</code>  的语法，都可以 Tree Shaking 命中。</li>
+<li><strong>SideEffects</strong>：在 Webpack4 中，会根据依赖模块 package.json 中的 sideEffects 属性来确认对应的依赖包代码是否会产生副作用。只有 sideEffects 为 false 的依赖包（或不在 sideEffects 对应数组中的文件），才可以实现安全移除未使用代码的功能。</li>
+<li><strong>Babel</strong>：在 babel7 之前的版本的 babel-preset-env 中，modules 默认是 commonjs，因此在处理模块时，即使原来是 ESM 模块化方案也会被变异成 commonjs 方案，而无法在优化阶段被 TreeShaking 命中；而在 babel7 中，modules 默认为 auto，这样在转换中如果是 ESM 模块不会被转换为 commonjs，也能在后面的优化阶段被 TreeShaking 命中。</li>
+</ol>
+<h2 id="优化方案总结"><a href="#优化方案总结" class="headerlink" title="优化方案总结"></a>优化方案总结</h2><p><strong>编译阶段优化：</strong></p>
+<ol>
+<li>减少执行编译的模块<ol>
+<li>IgnorePlugin</li>
+<li>按需引入</li>
+<li>DllPlugin</li>
+<li>Externals</li>
+</ol>
+</li>
+<li>提升单个模块编译速度<ol>
+<li>include/exclude</li>
+<li>noParse</li>
+<li>SourceMap</li>
+<li>Resolve</li>
+</ol>
+</li>
+<li>并行构建<ol>
+<li>thread-loader</li>
+</ol>
+</li>
+</ol>
+<p><strong>打包阶段优化：</strong></p>
+<ol>
+<li>提升当前任务的工作效率<ol>
+<li>压缩 JS</li>
+<li>压缩 CSS</li>
+</ol>
+</li>
+<li>提升后续环节的工作效率<ol>
+<li>Split Chunks</li>
+<li>Tree Shaking</li>
+</ol>
+</li>
+</ol>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/archives/">Writing</a></li>
+         
+          <li><a href="/categories/">Category</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/search/">Search</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BC%96%E8%AF%91%E9%98%B6%E6%AE%B5%E4%BC%98%E5%8C%96%E5%88%86%E6%9E%90"><span class="toc-number">1.</span> <span class="toc-text">编译阶段优化分析</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%87%8F%E5%B0%91%E6%89%A7%E8%A1%8C%E7%BC%96%E8%AF%91%E7%9A%84%E6%A8%A1%E5%9D%97"><span class="toc-number">1.1.</span> <span class="toc-text">减少执行编译的模块</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#IgnorePlugin"><span class="toc-number">1.1.1.</span> <span class="toc-text">IgnorePlugin</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%8C%89%E9%9C%80%E5%BC%95%E5%85%A5%E7%B1%BB%E5%BA%93%E6%A8%A1%E5%9D%97"><span class="toc-number">1.1.2.</span> <span class="toc-text">按需引入类库模块</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#DllPlugin"><span class="toc-number">1.1.3.</span> <span class="toc-text">DllPlugin</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Externals"><span class="toc-number">1.1.4.</span> <span class="toc-text">Externals</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8F%90%E5%8D%87%E5%8D%95%E4%B8%AA%E6%A8%A1%E5%9D%97%E6%9E%84%E5%BB%BA%E7%9A%84%E9%80%9F%E5%BA%A6"><span class="toc-number">1.2.</span> <span class="toc-text">提升单个模块构建的速度</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#include-exclude"><span class="toc-number">1.2.1.</span> <span class="toc-text">include&#x2F;exclude</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#noParse"><span class="toc-number">1.2.2.</span> <span class="toc-text">noParse</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#SourceMap"><span class="toc-number">1.2.3.</span> <span class="toc-text">SourceMap</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Resolve"><span class="toc-number">1.2.4.</span> <span class="toc-text">Resolve</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B9%B6%E8%A1%8C%E6%9E%84%E5%BB%BA%E4%BB%A5%E6%8F%90%E5%8D%87%E6%80%BB%E4%BD%93%E6%95%88%E7%8E%87"><span class="toc-number">1.3.</span> <span class="toc-text">并行构建以提升总体效率</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#thread-loader"><span class="toc-number">1.3.1.</span> <span class="toc-text">thread-loader</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%89%93%E5%8C%85%E9%98%B6%E6%AE%B5%E4%BC%98%E5%8C%96%E5%88%86%E6%9E%90"><span class="toc-number">2.</span> <span class="toc-text">打包阶段优化分析</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8F%90%E5%8D%87%E5%BD%93%E5%89%8D%E4%BB%BB%E5%8A%A1%E7%9A%84%E5%B7%A5%E4%BD%9C%E6%95%88%E7%8E%87"><span class="toc-number">2.1.</span> <span class="toc-text">提升当前任务的工作效率</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%9D%A2%E5%90%91-JS-%E7%9A%84%E5%8E%8B%E7%BC%A9%E5%B7%A5%E5%85%B7"><span class="toc-number">2.1.1.</span> <span class="toc-text">面向 JS 的压缩工具</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%9D%A2%E5%90%91-CSS-%E7%9A%84%E5%8E%8B%E7%BC%A9%E5%B7%A5%E5%85%B7"><span class="toc-number">2.1.2.</span> <span class="toc-text">面向 CSS 的压缩工具</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8F%90%E5%8D%87%E5%90%8E%E7%BB%AD%E7%8E%AF%E8%8A%82%E7%9A%84%E5%B7%A5%E4%BD%9C%E6%95%88%E7%8E%87"><span class="toc-number">2.2.</span> <span class="toc-text">提升后续环节的工作效率</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Split-Chunks"><span class="toc-number">2.2.1.</span> <span class="toc-text">Split Chunks</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Tree-Shaking"><span class="toc-number">2.2.2.</span> <span class="toc-text">Tree Shaking</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BC%98%E5%8C%96%E6%96%B9%E6%A1%88%E6%80%BB%E7%BB%93"><span class="toc-number">3.</span> <span class="toc-text">优化方案总结</span></a></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://oxyzhg.cn/post/97c23243/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://oxyzhg.cn/post/97c23243/&text=webpack构建优化分析"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://oxyzhg.cn/post/97c23243/&title=webpack构建优化分析"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://oxyzhg.cn/post/97c23243/&is_video=false&description=webpack构建优化分析"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=webpack构建优化分析&body=Check out this article: https://oxyzhg.cn/post/97c23243/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://oxyzhg.cn/post/97c23243/&title=webpack构建优化分析"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://oxyzhg.cn/post/97c23243/&title=webpack构建优化分析"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://oxyzhg.cn/post/97c23243/&title=webpack构建优化分析"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://oxyzhg.cn/post/97c23243/&title=webpack构建优化分析"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://oxyzhg.cn/post/97c23243/&name=webpack构建优化分析&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://oxyzhg.cn/post/97c23243/&t=webpack构建优化分析"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy; 2021 Oxyzhg
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/archives/">Writing</a></li>
+         
+          <li><a href="/categories/">Category</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/search/">Search</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+
+<link rel="stylesheet" href="/lib/justified-gallery/css/justifiedGallery.min.css">
+
+
+    <!-- jquery -->
+
+<script src="/lib/jquery/jquery.min.js"></script>
+
+
+<script src="/lib/justified-gallery/js/jquery.justifiedGallery.min.js"></script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+<!-- Disqus Comments -->
+
+
+</body>
+</html>

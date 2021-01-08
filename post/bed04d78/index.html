@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta name="description" content="Vue3 早已发布多时了，更新后一些新特性要利用起来。 在诸多更新内容中，让我感觉最舒服的点就是 Composition API 的出现，hooks 功能已经能带来很多便利了，甚至我们几乎可以像写 react 那样写 vue3 代码，这看起来是非常有意思的事情。 为什么说 vue3 越来越 react 化呢，这在开发者看来是编码形式越来越像，尤其在 vue3 的出现，使得 vue 也能像 reac">
+<meta property="og:type" content="article">
+<meta property="og:title" content="rollup+vue3+ts组件打包实践">
+<meta property="og:url" content="https://oxyzhg.cn/post/bed04d78/index.html">
+<meta property="og:site_name" content="Oxyzhg">
+<meta property="og:description" content="Vue3 早已发布多时了，更新后一些新特性要利用起来。 在诸多更新内容中，让我感觉最舒服的点就是 Composition API 的出现，hooks 功能已经能带来很多便利了，甚至我们几乎可以像写 react 那样写 vue3 代码，这看起来是非常有意思的事情。 为什么说 vue3 越来越 react 化呢，这在开发者看来是编码形式越来越像，尤其在 vue3 的出现，使得 vue 也能像 reac">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2020-11-05T09:27:00.000Z">
+<meta property="article:modified_time" content="2021-01-08T02:08:34.621Z">
+<meta property="article:author" content="Oxyzhg">
+<meta property="article:tag" content="rollup">
+<meta property="article:tag" content="vue3">
+<meta property="article:tag" content="ts">
+<meta name="twitter:card" content="summary">
+    
+    
+        
+          
+              <link rel="shortcut icon" href="/images/favicon.ico">
+          
+        
+        
+          
+            <link rel="icon" type="image/png" href="/images/logo.png" sizes="192x192">
+          
+        
+        
+          
+            <link rel="apple-touch-icon" sizes="180x180" href="/images/logo.png">
+          
+        
+    
+    <!-- title -->
+    <title>rollup+vue3+ts组件打包实践</title>
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+      
+<link rel="stylesheet" href="/css/rtl.css">
+
+    
+    <!-- rss -->
+    
+    
+<meta name="generator" content="Hexo 5.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/archives/">Writing</a></li>
+         
+          <li><a href="/categories/">Category</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/search/">Search</a></li>
+        
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" href="/post/95d1cb85/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" href="/post/5cae23e2/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://oxyzhg.cn/post/bed04d78/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://oxyzhg.cn/post/bed04d78/&text=rollup+vue3+ts组件打包实践"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://oxyzhg.cn/post/bed04d78/&title=rollup+vue3+ts组件打包实践"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://oxyzhg.cn/post/bed04d78/&is_video=false&description=rollup+vue3+ts组件打包实践"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=rollup+vue3+ts组件打包实践&body=Check out this article: https://oxyzhg.cn/post/bed04d78/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://oxyzhg.cn/post/bed04d78/&title=rollup+vue3+ts组件打包实践"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://oxyzhg.cn/post/bed04d78/&title=rollup+vue3+ts组件打包实践"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://oxyzhg.cn/post/bed04d78/&title=rollup+vue3+ts组件打包实践"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://oxyzhg.cn/post/bed04d78/&title=rollup+vue3+ts组件打包实践"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://oxyzhg.cn/post/bed04d78/&name=rollup+vue3+ts组件打包实践&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://oxyzhg.cn/post/bed04d78/&t=rollup+vue3+ts组件打包实践"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%9D%E5%A7%8B%E5%8C%96%E9%A1%B9%E7%9B%AE"><span class="toc-number">1.</span> <span class="toc-text">初始化项目</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#lerna-workspace"><span class="toc-number">2.</span> <span class="toc-text">lerna+workspace</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%80%89%E6%8B%A9%E9%9D%99%E6%80%81%E6%96%87%E6%A1%A3%E5%BA%93"><span class="toc-number">3.</span> <span class="toc-text">选择静态文档库</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BB%84%E4%BB%B6%E5%BC%80%E5%8F%91%E9%85%8D%E7%BD%AE"><span class="toc-number">4.</span> <span class="toc-text">组件开发配置</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Rollup-%E6%89%93%E5%8C%85"><span class="toc-number">5.</span> <span class="toc-text">Rollup 打包</span></a></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        rollup+vue3+ts组件打包实践
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">Kq</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2020-11-05T09:27:00.000Z" itemprop="datePublished">2020-11-05</time>
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fas fa-archive"></i>
+        <a class="category-link" href="/categories/%E5%89%8D%E7%AB%AF%E5%B7%A5%E7%A8%8B%E5%8C%96/">前端工程化</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link-link" href="/tags/rollup/" rel="tag">rollup</a>, <a class="tag-link-link" href="/tags/ts/" rel="tag">ts</a>, <a class="tag-link-link" href="/tags/vue3/" rel="tag">vue3</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <p>Vue3 早已发布多时了，更新后一些新特性要利用起来。</p>
+<p>在诸多更新内容中，让我感觉最舒服的点就是 Composition API 的出现，hooks 功能已经能带来很多便利了，甚至我们几乎可以像写 react 那样写 vue3 代码，这看起来是非常有意思的事情。</p>
+<p>为什么说 vue3 越来越 react 化呢，这在开发者看来是编码形式越来越像，尤其在 vue3 的出现，使得 vue 也能像 react 那样使用 hooks 来代替 mixin 这种非主流的方式。当然，尽管我选择使用 jsx 的方式开发 vue3 应用，但我还是认为 vue3 有点不伦不类，因为 Options API 仍然存在，开发者还是逃不掉 vue 帮我们完成一些事，当然这不是坏事。</p>
+<p>每种框架都有其优缺点，看个人喜好选择即可。话不多说，我们动手尝试使用 vue3+typescript+jsx 初始化一个组件小项目，最后我们会使用 rollup 打包这个组件。</p>
+<h2 id="初始化项目"><a href="#初始化项目" class="headerlink" title="初始化项目"></a>初始化项目</h2><p>前些日子看了下别的组件库，有采用 monorepo+lerna 方式管理源码、文档以及其他依赖的方式，正好我们可以学习下这个模式，初始化的项目中包含组件源码和文档源码。</p>
+<p>新建项目目录，并初始化项目：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">mkdir test-repo</span><br><span class="line">cd test-repo</span><br><span class="line">npm init -y</span><br></pre></td></tr></table></figure>
+<p>我们的目录结构应该是这样子：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">test-repo</span><br><span class="line">├─packages</span><br><span class="line">│  ├─mox-table</span><br><span class="line">│  │  ├─src</span><br><span class="line">│  │  ├─package.json</span><br><span class="line">│  │  └─README.md</span><br><span class="line">│  └─website</span><br><span class="line">│     ├─docs</span><br><span class="line">│     ├─package.json</span><br><span class="line">│     └─README.md</span><br><span class="line">├─.editorconfig</span><br><span class="line">├─.gitignore</span><br><span class="line">├─.prettierrc</span><br><span class="line">├─lerna.json</span><br><span class="line">├─package.json</span><br><span class="line">└─README.md</span><br></pre></td></tr></table></figure>
+<p>这个结构中，test-repo 是包含 mox-table 和 website 两个包的项目，test-repo 本身在 package.json 中设置 <code>private: true</code>  属性保证是私仓不发布，子项目 mox-table 和 website 是需要发布的。这种单仓多包的管理方式大概就是 monorepo 仓储管理方案。</p>
+<h2 id="lerna-workspace"><a href="#lerna-workspace" class="headerlink" title="lerna+workspace"></a>lerna+workspace</h2><p>尽管我们采用 monorepo 的方式来管理这个组件库，但时我们的组件库并没有达到这个量级，这里有点为了用而用的意思，当然也是为了做个尝试，一通二，二通百，触类旁通就是这个道理。</p>
+<p>管理怎么使用 lerna+monorepo 管理单仓多包项目，请看另一篇总结。</p>
+<h2 id="选择静态文档库"><a href="#选择静态文档库" class="headerlink" title="选择静态文档库"></a>选择静态文档库</h2><p>市面上展示静态文档的工具有很多，像 vuepress/gitbook/gatsby/docusaurus 这些都可以作为文档工具使用，本来想选 gatsby 但是本地安装老是出问题，暂时弃用，这里我选用了基于 react 生态的 Docusaurus 展示文档，因为这个比较好看且简洁。</p>
+<p>这里有 <a target="_blank" rel="noopener" href="https://www.docusaurus.cn/docs/installation">Docusaurus</a> 官方文档是使用说明，框架很容易上手，这里不作过多赘述。</p>
+<h2 id="组件开发配置"><a href="#组件开发配置" class="headerlink" title="组件开发配置"></a>组件开发配置</h2><p>vue3 项目构建有 webpack 和 vite 可选，由于是本地开发测试项目，我们选择 vite 作为 vue3 的本地构建工具。</p>
+<p>使用 lerna 为 mox-table 包添加依赖：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">lerna add mox-table --scope vue@next vite typescript</span><br></pre></td></tr></table></figure>
+<p>执行 tsc 命令，初始化 tsconfig.json 配置：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npx tsc --init</span><br></pre></td></tr></table></figure>
+<p>初始化的配置项有很多，我们根据我们的项目选择适合我们使用的即可，这里关于 tsconfig.json 的总结可以看一下我记录的另一篇笔记，有较全面的说明，这里直接给出一份最终配置：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attr">&quot;compilerOptions&quot;</span>: &#123;</span><br><span class="line">    <span class="comment">/* Basic Options */</span></span><br><span class="line">    <span class="attr">&quot;target&quot;</span>: <span class="string">&quot;es2015&quot;</span> <span class="comment">/* 编译成 ES2015 */</span>,</span><br><span class="line">    <span class="attr">&quot;module&quot;</span>: <span class="string">&quot;es2015&quot;</span> <span class="comment">/* 编译后的代码模块化方案是 ES Module */</span>,</span><br><span class="line">    <span class="attr">&quot;allowJs&quot;</span>: <span class="literal">true</span> <span class="comment">/* 允许 javascript 文件编译 */</span>,</span><br><span class="line">    <span class="attr">&quot;jsx&quot;</span>: <span class="string">&quot;preserve&quot;</span> <span class="comment">/* 组件使用 JSX 语法编写，这里采用 vue3 推荐的 preserve */</span>,</span><br><span class="line">    <span class="attr">&quot;declaration&quot;</span>: <span class="literal">true</span> <span class="comment">/* 生成 .d.ts 文件，不过现在还没发现编译后声明文件的作用 */</span>,</span><br><span class="line">    <span class="attr">&quot;outDir&quot;</span>: <span class="string">&quot;dist&quot;</span> <span class="comment">/* 编译后的文件输出到 dist 文件夹 */</span>,</span><br><span class="line"></span><br><span class="line">    <span class="comment">/* Strict Type-Checking Options */</span></span><br><span class="line">    <span class="attr">&quot;strict&quot;</span>: <span class="literal">true</span> <span class="comment">/* 开启严格类型检查，其余的几项也会默认开启 */</span>,</span><br><span class="line"></span><br><span class="line">    <span class="comment">/* Module Resolution Options */</span></span><br><span class="line">    <span class="attr">&quot;moduleResolution&quot;</span>: <span class="string">&quot;node&quot;</span> <span class="comment">/* 使用 nodejs 提供的模块解析策略 */</span>,</span><br><span class="line">    <span class="attr">&quot;esModuleInterop&quot;</span>: <span class="literal">true</span> <span class="comment">/* 兼容 cjs 和 esm 模块化导入导出方案 */</span>,</span><br><span class="line"></span><br><span class="line">    <span class="comment">/* Advanced Options */</span></span><br><span class="line">    <span class="attr">&quot;skipLibCheck&quot;</span>: <span class="literal">true</span> <span class="comment">/* Skip type checking of declaration files. */</span>,</span><br><span class="line">    <span class="attr">&quot;forceConsistentCasingInFileNames&quot;</span>: <span class="literal">true</span> <span class="comment">/* Disallow inconsistently-cased references to the same file. */</span></span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="attr">&quot;files&quot;</span>: [<span class="string">&quot;src/index.ts&quot;</span> <span class="comment">/* 项目入口文件 */</span>]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>vue 官方也推荐了一份基本配置，由于我们后续还要使用 rollup 打包，因此上述配置已经做了一定的修改。</p>
+<p>我查了下现在社区已经有很多关于 vue3 上手或者原理解析等文章，各有特点，我在学习了一下他们的代码，然后这里给出 jsx 的写法（我比较喜欢 jsx 的写法，一是跟 react 很像，二是引入的其他模块可以不用定义在 data 属性中直接在 render 函数中使用，三是这种开发模式能更好的接近 javascript 开发而不是 vue 大包大揽都帮我们实现）</p>
+<p>最终目录结构如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">test-repo</span><br><span class="line">├─packages</span><br><span class="line">│  ├─mox-table</span><br><span class="line">│  │  ├─src</span><br><span class="line">│  │  │  ├─header.tsx</span><br><span class="line">│  │  │  ├─index.ts</span><br><span class="line">│  │  │  ├─interfaces.ts</span><br><span class="line">│  │  │  ├─loading.tsx</span><br><span class="line">│  │  │  └─table.tsx</span><br><span class="line">│  │  ├─examples</span><br><span class="line">│  │  │  ├─App.tsx</span><br><span class="line">│  │  │  └─main.ts</span><br><span class="line">│  │  ├─index.html</span><br><span class="line">│  │  ├─package.json</span><br><span class="line">│  │  ├─README.md</span><br><span class="line">│  │  ├─rollup.config.js</span><br><span class="line">│  │  └─tsconfig.json</span><br><span class="line">│  └─website</span><br><span class="line">│     ├─docs</span><br><span class="line">│     └─package.json</span><br><span class="line">├─lerna.json</span><br><span class="line">├─package.json</span><br><span class="line">└─README.md</span><br></pre></td></tr></table></figure>
+<p>修改 index.html</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">&lt;!DOCTYPE html&gt;</span><br><span class="line">&lt;html lang=<span class="string">&quot;en&quot;</span>&gt;</span><br><span class="line">&lt;head&gt;</span><br><span class="line">  &lt;meta charset=<span class="string">&quot;UTF-8&quot;</span>&gt;</span><br><span class="line">  &lt;meta name=<span class="string">&quot;viewport&quot;</span> content=<span class="string">&quot;width=device-width, initial-scale=1.0&quot;</span>&gt;</span><br><span class="line">  &lt;title&gt;Kala Table&lt;/title&gt;</span><br><span class="line">&lt;/head&gt;</span><br><span class="line">&lt;body&gt;</span><br><span class="line">  &lt;div id=<span class="string">&quot;root&quot;</span>&gt;&lt;/div&gt;</span><br><span class="line">  &lt;script type=<span class="string">&quot;module&quot;</span> src=<span class="string">&quot;/test/main.ts&quot;</span>&gt;&lt;/script&gt;</span><br><span class="line">&lt;/body&gt;</span><br><span class="line">&lt;/html&gt;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>修改 main.ts</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; createApp &#125; <span class="keyword">from</span> <span class="string">&#x27;vue&#x27;</span>;</span><br><span class="line"><span class="keyword">import</span> App <span class="keyword">from</span> <span class="string">&#x27;./App&#x27;</span>;</span><br><span class="line"></span><br><span class="line">createApp(App).mount(<span class="string">&#x27;#root&#x27;</span>);</span><br></pre></td></tr></table></figure>
+<p>修改 App.tsx</p>
+<figure class="highlight jsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; defineComponent &#125; <span class="keyword">from</span> <span class="string">&#x27;vue&#x27;</span>;</span><br><span class="line"><span class="keyword">import</span> &#123; BaseTable &#125; <span class="keyword">from</span> <span class="string">&#x27;../src&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> dataSource = [</span><br><span class="line">  &#123; <span class="attr">prov</span>: <span class="string">&#x27;湖北省&#x27;</span>, <span class="attr">confirmed</span>: <span class="number">54406</span>, <span class="attr">cured</span>: <span class="number">4793</span>, <span class="attr">dead</span>: <span class="number">1457</span>, <span class="attr">t</span>: <span class="string">&#x27;2020-02-15 19:52:02&#x27;</span> &#125;,</span><br><span class="line">  &#123; <span class="attr">prov</span>: <span class="string">&#x27;广东省&#x27;</span>, <span class="attr">confirmed</span>: <span class="number">1294</span>, <span class="attr">cured</span>: <span class="number">409</span>, <span class="attr">dead</span>: <span class="number">2</span>, <span class="attr">t</span>: <span class="string">&#x27;2020-02-15 19:52:02&#x27;</span> &#125;,</span><br><span class="line">  &#123; <span class="attr">prov</span>: <span class="string">&#x27;河南省&#x27;</span>, <span class="attr">confirmed</span>: <span class="number">1212</span>, <span class="attr">cured</span>: <span class="number">390</span>, <span class="attr">dead</span>: <span class="number">13</span>, <span class="attr">t</span>: <span class="string">&#x27;2020-02-15 19:52:02&#x27;</span> &#125;,</span><br><span class="line">  &#123; <span class="attr">prov</span>: <span class="string">&#x27;浙江省&#x27;</span>, <span class="attr">confirmed</span>: <span class="number">1162</span>, <span class="attr">cured</span>: <span class="number">428</span>, <span class="attr">dead</span>: <span class="number">0</span>, <span class="attr">t</span>: <span class="string">&#x27;2020-02-15 19:52:02&#x27;</span> &#125;,</span><br><span class="line">  &#123; <span class="attr">prov</span>: <span class="string">&#x27;湖南省&#x27;</span>, <span class="attr">confirmed</span>: <span class="number">1001</span>, <span class="attr">cured</span>: <span class="number">417</span>, <span class="attr">dead</span>: <span class="number">2</span>, <span class="attr">t</span>: <span class="string">&#x27;2020-02-15 19:52:02&#x27;</span> &#125;,</span><br><span class="line">];</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> columns = [</span><br><span class="line">  &#123; <span class="attr">code</span>: <span class="string">&#x27;prov&#x27;</span>, <span class="attr">name</span>: <span class="string">&#x27;省份&#x27;</span>, <span class="attr">width</span>: <span class="number">150</span> &#125;,</span><br><span class="line">  &#123; <span class="attr">code</span>: <span class="string">&#x27;confirmed&#x27;</span>, <span class="attr">name</span>: <span class="string">&#x27;确诊&#x27;</span>, <span class="attr">width</span>: <span class="number">100</span>, <span class="attr">align</span>: <span class="string">&#x27;right&#x27;</span> &#125;,</span><br><span class="line">  &#123; <span class="attr">code</span>: <span class="string">&#x27;cured&#x27;</span>, <span class="attr">name</span>: <span class="string">&#x27;治愈&#x27;</span>, <span class="attr">width</span>: <span class="number">100</span>, <span class="attr">align</span>: <span class="string">&#x27;right&#x27;</span> &#125;,</span><br><span class="line">  &#123; <span class="attr">code</span>: <span class="string">&#x27;dead&#x27;</span>, <span class="attr">name</span>: <span class="string">&#x27;死亡&#x27;</span>, <span class="attr">width</span>: <span class="number">100</span>, <span class="attr">align</span>: <span class="string">&#x27;right&#x27;</span> &#125;,</span><br><span class="line">  &#123; <span class="attr">code</span>: <span class="string">&#x27;t&#x27;</span>, <span class="attr">name</span>: <span class="string">&#x27;最后更新时间&#x27;</span>, <span class="attr">width</span>: <span class="number">180</span> &#125;,</span><br><span class="line">];</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> defineComponent(&#123;</span><br><span class="line">  name: <span class="string">&#x27;App&#x27;</span>,</span><br><span class="line"></span><br><span class="line">  components: &#123;</span><br><span class="line">    BaseTable,</span><br><span class="line">  &#125;,</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="title">render</span>(<span class="params"></span>)</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> (</span><br><span class="line">      &lt;div&gt;</span><br><span class="line">        &lt;BaseTable dataSource=&#123;dataSource&#125; columns=&#123;columns&#125;&gt;&lt;/BaseTable&gt;</span><br><span class="line">      &lt;/div&gt;</span><br><span class="line">    );</span><br><span class="line">  &#125;,</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<p>这样一个基本的项目结构就搭建完成了，接下来就是开发组件了，这里还没发开发完，先看下使用 rollup 打包。</p>
+<h2 id="Rollup-打包"><a href="#Rollup-打包" class="headerlink" title="Rollup 打包"></a>Rollup 打包</h2><p>关于 Rollup 打包 vue3+typescript+jsx 项目的配置，也在另一篇笔记中有详细记录，我这里分享最终的 rollup 配置：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> path <span class="keyword">from</span> <span class="string">&#x27;path&#x27;</span>;</span><br><span class="line"><span class="keyword">import</span> resolve <span class="keyword">from</span> <span class="string">&#x27;@rollup/plugin-node-resolve&#x27;</span>;</span><br><span class="line"><span class="keyword">import</span> commonjs <span class="keyword">from</span> <span class="string">&#x27;@rollup/plugin-commonjs&#x27;</span>;</span><br><span class="line"><span class="keyword">import</span> babel <span class="keyword">from</span> <span class="string">&#x27;@rollup/plugin-babel&#x27;</span>;</span><br><span class="line"><span class="keyword">import</span> typescript <span class="keyword">from</span> <span class="string">&#x27;rollup-plugin-typescript2&#x27;</span>;</span><br><span class="line"><span class="keyword">import</span> &#123; terser &#125; <span class="keyword">from</span> <span class="string">&#x27;rollup-plugin-terser&#x27;</span>;</span><br><span class="line"><span class="comment">// import vue from &#x27;rollup-plugin-vue&#x27;;</span></span><br><span class="line"><span class="keyword">import</span> postcss <span class="keyword">from</span> <span class="string">&#x27;rollup-plugin-postcss&#x27;</span>;</span><br><span class="line"><span class="keyword">import</span> cssnano <span class="keyword">from</span> <span class="string">&#x27;cssnano&#x27;</span>;</span><br><span class="line"><span class="keyword">import</span> jsx <span class="keyword">from</span> <span class="string">&#x27;acorn-jsx&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> extensions = [<span class="string">&#x27;.js&#x27;</span>, <span class="string">&#x27;.ts&#x27;</span>, <span class="string">&#x27;.tsx&#x27;</span>, <span class="string">&#x27;.json&#x27;</span>];</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> config = &#123;</span><br><span class="line">  input: <span class="string">&#x27;src/index.ts&#x27;</span>,</span><br><span class="line">  output: [</span><br><span class="line">    &#123;</span><br><span class="line">      dir: <span class="string">&#x27;dist&#x27;</span>,</span><br><span class="line">      format: <span class="string">&#x27;esm&#x27;</span>,</span><br><span class="line">      entryFileNames: <span class="string">&#x27;[name].esm.js&#x27;</span>,</span><br><span class="line">      chunkFileNames: <span class="string">&#x27;chunks/kala-table-[name]-[hash].esm.js&#x27;</span>,</span><br><span class="line">    &#125;,</span><br><span class="line">    &#123;</span><br><span class="line">      dir: <span class="string">&#x27;dist&#x27;</span>,</span><br><span class="line">      format: <span class="string">&#x27;cjs&#x27;</span>,</span><br><span class="line">      entryFileNames: <span class="string">&#x27;[name].cjs.js&#x27;</span>,</span><br><span class="line">      chunkFileNames: <span class="string">&#x27;chunks/kala-table-[name]-[hash].cjs.js&#x27;</span>,</span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="comment">// &#123;</span></span><br><span class="line">    <span class="comment">//   dir: &#x27;dist&#x27;,</span></span><br><span class="line">    <span class="comment">//   name: &#x27;Vue&#x27;,</span></span><br><span class="line">    <span class="comment">//   globals: &#123;</span></span><br><span class="line">    <span class="comment">//     vue: &#x27;Vue&#x27;</span></span><br><span class="line">    <span class="comment">//   &#125;,</span></span><br><span class="line">    <span class="comment">//   format: &#x27;umd&#x27;,</span></span><br><span class="line">    <span class="comment">//   entryFileNames: &#x27;[name].umd.js&#x27;,</span></span><br><span class="line">    <span class="comment">//   chunkFileNames: &#x27;chunks/kala-table-[name]-[hash].umd.js&#x27;,</span></span><br><span class="line">    <span class="comment">// &#125;,</span></span><br><span class="line">  ],</span><br><span class="line">  plugins: [</span><br><span class="line">    resolve(&#123;</span><br><span class="line">      extensions,</span><br><span class="line">      mainFields: [<span class="string">&#x27;module&#x27;</span>, <span class="string">&#x27;main&#x27;</span>, <span class="string">&#x27;browser&#x27;</span>],</span><br><span class="line">    &#125;),</span><br><span class="line">    typescript(&#123;</span><br><span class="line">      lib: [<span class="string">&#x27;es5&#x27;</span>, <span class="string">&#x27;es6&#x27;</span>, <span class="string">&#x27;dom&#x27;</span>],</span><br><span class="line">      target: <span class="string">&#x27;es5&#x27;</span>,</span><br><span class="line">      noEmitOnError: <span class="literal">true</span>,</span><br><span class="line">    &#125;),</span><br><span class="line">    commonjs(&#123;</span><br><span class="line">      extensions,</span><br><span class="line">      sourceMap: <span class="literal">true</span>,</span><br><span class="line">    &#125;),</span><br><span class="line">    babel(&#123;</span><br><span class="line">      exclude: <span class="string">&#x27;**/node_modules/**&#x27;</span>,</span><br><span class="line">      babelHelpers: <span class="string">&#x27;bundled&#x27;</span>,</span><br><span class="line">      extensions,</span><br><span class="line">    &#125;),</span><br><span class="line">    postcss(&#123;</span><br><span class="line">      plugins: [cssnano],</span><br><span class="line">      modules: <span class="literal">true</span>,</span><br><span class="line">      extract: path.resolve(<span class="string">&#x27;dist/assets/style.css&#x27;</span>),</span><br><span class="line">    &#125;),</span><br><span class="line">    <span class="comment">// vue(&#123;</span></span><br><span class="line">    <span class="comment">//   css: true,</span></span><br><span class="line">    <span class="comment">//   compileTemplate: true,</span></span><br><span class="line">    <span class="comment">// &#125;),</span></span><br><span class="line">    terser(),</span><br><span class="line">  ],</span><br><span class="line">  acornInjectPlugins: [jsx()],</span><br><span class="line">  external: [<span class="string">&#x27;vue&#x27;</span>],</span><br><span class="line">  treeshake: &#123;</span><br><span class="line">    moduleSideEffects: <span class="literal">false</span>,</span><br><span class="line">  &#125;,</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> config;</span><br></pre></td></tr></table></figure>
+<p>上述配置处理了 babel, typescript, jsx, postcss 等相关代码，打包后的文件完全可以在业务组件中引用。</p>
+<p>这篇使用 vue3+typescript+jsx+rollup 开发和打包组件的文章，已经被我拆分为不同的模块了，每个模块基本都有笔记记录开发过程，或许有总结遗漏的地方，</p>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/archives/">Writing</a></li>
+         
+          <li><a href="/categories/">Category</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/search/">Search</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%9D%E5%A7%8B%E5%8C%96%E9%A1%B9%E7%9B%AE"><span class="toc-number">1.</span> <span class="toc-text">初始化项目</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#lerna-workspace"><span class="toc-number">2.</span> <span class="toc-text">lerna+workspace</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%80%89%E6%8B%A9%E9%9D%99%E6%80%81%E6%96%87%E6%A1%A3%E5%BA%93"><span class="toc-number">3.</span> <span class="toc-text">选择静态文档库</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BB%84%E4%BB%B6%E5%BC%80%E5%8F%91%E9%85%8D%E7%BD%AE"><span class="toc-number">4.</span> <span class="toc-text">组件开发配置</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Rollup-%E6%89%93%E5%8C%85"><span class="toc-number">5.</span> <span class="toc-text">Rollup 打包</span></a></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://oxyzhg.cn/post/bed04d78/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://oxyzhg.cn/post/bed04d78/&text=rollup+vue3+ts组件打包实践"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://oxyzhg.cn/post/bed04d78/&title=rollup+vue3+ts组件打包实践"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://oxyzhg.cn/post/bed04d78/&is_video=false&description=rollup+vue3+ts组件打包实践"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=rollup+vue3+ts组件打包实践&body=Check out this article: https://oxyzhg.cn/post/bed04d78/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://oxyzhg.cn/post/bed04d78/&title=rollup+vue3+ts组件打包实践"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://oxyzhg.cn/post/bed04d78/&title=rollup+vue3+ts组件打包实践"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://oxyzhg.cn/post/bed04d78/&title=rollup+vue3+ts组件打包实践"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://oxyzhg.cn/post/bed04d78/&title=rollup+vue3+ts组件打包实践"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://oxyzhg.cn/post/bed04d78/&name=rollup+vue3+ts组件打包实践&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://oxyzhg.cn/post/bed04d78/&t=rollup+vue3+ts组件打包实践"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy; 2021 Oxyzhg
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/archives/">Writing</a></li>
+         
+          <li><a href="/categories/">Category</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/search/">Search</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+
+<link rel="stylesheet" href="/lib/justified-gallery/css/justifiedGallery.min.css">
+
+
+    <!-- jquery -->
+
+<script src="/lib/jquery/jquery.min.js"></script>
+
+
+<script src="/lib/justified-gallery/js/jquery.justifiedGallery.min.js"></script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+<!-- Disqus Comments -->
+
+
+</body>
+</html>

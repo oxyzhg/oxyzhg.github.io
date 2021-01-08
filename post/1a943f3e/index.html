@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta name="description" content="基本工作流程通常，在项目中有两种运行 Webpack 的方式： 1.基于命令行的方式 1webpack --config webpack.config.js 2.基于代码的方式 123let webpack &#x3D; require(&amp;#x27;webpack&amp;#x27;);let config &#x3D; require(&amp;#x27;.&#x2F;webpack.config&amp;#x27;);webpack(config">
+<meta property="og:type" content="article">
+<meta property="og:title" content="webpack完整的构建流程">
+<meta property="og:url" content="https://oxyzhg.cn/post/1a943f3e/index.html">
+<meta property="og:site_name" content="Oxyzhg">
+<meta property="og:description" content="基本工作流程通常，在项目中有两种运行 Webpack 的方式： 1.基于命令行的方式 1webpack --config webpack.config.js 2.基于代码的方式 123let webpack &#x3D; require(&amp;#x27;webpack&amp;#x27;);let config &#x3D; require(&amp;#x27;.&#x2F;webpack.config&amp;#x27;);webpack(config">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://s0.lgstatic.com/i/image/M00/4D/B4/Ciqc1F9bGtqAJo4uAABnYGwsyYs218.png">
+<meta property="article:published_time" content="2020-12-11T09:02:08.000Z">
+<meta property="article:modified_time" content="2021-01-08T02:08:34.621Z">
+<meta property="article:author" content="Oxyzhg">
+<meta property="article:tag" content="源码">
+<meta property="article:tag" content="webpack">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://s0.lgstatic.com/i/image/M00/4D/B4/Ciqc1F9bGtqAJo4uAABnYGwsyYs218.png">
+    
+    
+        
+          
+              <link rel="shortcut icon" href="/images/favicon.ico">
+          
+        
+        
+          
+            <link rel="icon" type="image/png" href="/images/logo.png" sizes="192x192">
+          
+        
+        
+          
+            <link rel="apple-touch-icon" sizes="180x180" href="/images/logo.png">
+          
+        
+    
+    <!-- title -->
+    <title>webpack完整的构建流程</title>
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+      
+<link rel="stylesheet" href="/css/rtl.css">
+
+    
+    <!-- rss -->
+    
+    
+<meta name="generator" content="Hexo 5.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/archives/">Writing</a></li>
+         
+          <li><a href="/categories/">Category</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/search/">Search</a></li>
+        
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" href="/post/97c23243/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" href="/post/82c7efc8/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://oxyzhg.cn/post/1a943f3e/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://oxyzhg.cn/post/1a943f3e/&text=webpack完整的构建流程"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://oxyzhg.cn/post/1a943f3e/&title=webpack完整的构建流程"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://oxyzhg.cn/post/1a943f3e/&is_video=false&description=webpack完整的构建流程"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=webpack完整的构建流程&body=Check out this article: https://oxyzhg.cn/post/1a943f3e/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://oxyzhg.cn/post/1a943f3e/&title=webpack完整的构建流程"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://oxyzhg.cn/post/1a943f3e/&title=webpack完整的构建流程"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://oxyzhg.cn/post/1a943f3e/&title=webpack完整的构建流程"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://oxyzhg.cn/post/1a943f3e/&title=webpack完整的构建流程"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://oxyzhg.cn/post/1a943f3e/&name=webpack完整的构建流程&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://oxyzhg.cn/post/1a943f3e/&t=webpack完整的构建流程"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9F%BA%E6%9C%AC%E5%B7%A5%E4%BD%9C%E6%B5%81%E7%A8%8B"><span class="toc-number">1.</span> <span class="toc-text">基本工作流程</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#webpack-js-%E4%B8%AD%E7%9A%84%E5%9F%BA%E6%9C%AC%E6%B5%81%E7%A8%8B"><span class="toc-number">1.1.</span> <span class="toc-text">webpack.js 中的基本流程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Compiler-js-%E4%B8%AD%E7%9A%84%E5%9F%BA%E6%9C%AC%E6%B5%81%E7%A8%8B"><span class="toc-number">1.2.</span> <span class="toc-text">Compiler.js 中的基本流程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Compilation-js-%E4%B8%AD%E7%9A%84%E5%9F%BA%E6%9C%AC%E6%B5%81%E7%A8%8B"><span class="toc-number">1.3.</span> <span class="toc-text">Compilation.js 中的基本流程</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Webpack-%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F"><span class="toc-number">2.</span> <span class="toc-text">Webpack 生命周期</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Webpack-%E4%B8%AD%E7%9A%84%E6%8F%92%E4%BB%B6"><span class="toc-number">2.1.</span> <span class="toc-text">Webpack 中的插件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Hooks-%E7%9A%84%E4%BD%BF%E7%94%A8%E6%96%B9%E5%BC%8F"><span class="toc-number">2.2.</span> <span class="toc-text">Hooks 的使用方式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Compiler-Hooks"><span class="toc-number">2.3.</span> <span class="toc-text">Compiler Hooks</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Compilation-Hooks"><span class="toc-number">2.4.</span> <span class="toc-text">Compilation Hooks</span></a></li></ol></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        webpack完整的构建流程
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">Kq</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2020-12-11T09:02:08.000Z" itemprop="datePublished">2020-12-11</time>
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fas fa-archive"></i>
+        <a class="category-link" href="/categories/%E5%89%8D%E7%AB%AF%E5%B7%A5%E7%A8%8B%E5%8C%96/">前端工程化</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link-link" href="/tags/webpack/" rel="tag">webpack</a>, <a class="tag-link-link" href="/tags/%E6%BA%90%E7%A0%81/" rel="tag">源码</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <h2 id="基本工作流程"><a href="#基本工作流程" class="headerlink" title="基本工作流程"></a>基本工作流程</h2><p>通常，在项目中有两种运行 Webpack 的方式：</p>
+<p>1.基于命令行的方式</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">webpack --config webpack.config.js</span><br></pre></td></tr></table></figure>
+<p>2.基于代码的方式</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> webpack = <span class="built_in">require</span>(<span class="string">&#x27;webpack&#x27;</span>);</span><br><span class="line"><span class="keyword">let</span> config = <span class="built_in">require</span>(<span class="string">&#x27;./webpack.config&#x27;</span>);</span><br><span class="line">webpack(config, <span class="function">(<span class="params">err, stats</span>) =&gt;</span> &#123;&#125;);</span><br></pre></td></tr></table></figure>
+<h3 id="webpack-js-中的基本流程"><a href="#webpack-js-中的基本流程" class="headerlink" title="webpack.js 中的基本流程"></a>webpack.js 中的基本流程</h3><p>无论用哪种方式运行，本质上都是执行 <a target="_blank" rel="noopener" href="https://github.com/webpack/webpack/blob/webpack-4/lib/webpack.js">webpack.js</a> 中的 Webpack 函数。这一函数的核心逻辑是：</p>
+<ol>
+<li>校验 options</li>
+<li>处理 options 默认值</li>
+<li>根据配置生成编译器实例 compiler</li>
+<li>处理参数中的插件</li>
+<li>分析参数，根据参数加载不同内部插件</li>
+<li>如果有回调函数，根据是否是 watch 模式来决定要执行 compiler.watch 还是 compiler.run</li>
+<li>返回 compiler 实例</li>
+</ol>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> webpack = <span class="function">(<span class="params">options, callback</span>) =&gt;</span> &#123;</span><br><span class="line">  <span class="comment">// 1. 校验 options</span></span><br><span class="line">  <span class="comment">// 2. 处理 options 默认值</span></span><br><span class="line">  options = <span class="keyword">new</span> WebpackOptionsDefaulter().process(options);</span><br><span class="line">  <span class="comment">// 3. 实例化 compiler</span></span><br><span class="line">  <span class="keyword">let</span> compiler = <span class="keyword">new</span> Compiler(options.context);</span><br><span class="line">  <span class="comment">// 4. 处理插件</span></span><br><span class="line">  <span class="keyword">if</span> (options.plugins &amp;&amp; <span class="built_in">Array</span>.isArray(options.plugins)) &#123;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="comment">// 5. 分析参数，加载内部插件</span></span><br><span class="line">  compiler.options = <span class="keyword">new</span> WebpackOptionsApply().process(options, compiler); <span class="comment">// 分析参数，加载各内部插件</span></span><br><span class="line">  <span class="comment">// 6. 处理回调函数，根据是否监听分为2种</span></span><br><span class="line">  <span class="keyword">if</span> (callback) &#123;</span><br><span class="line">    <span class="keyword">if</span> (options.watch) &#123;</span><br><span class="line">      <span class="keyword">return</span> compiler.watch(watchOptions, callback);</span><br><span class="line">    &#125;</span><br><span class="line">    compiler.run(callback);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="comment">// 7. 返回 compiler 实例</span></span><br><span class="line">  <span class="keyword">return</span> compiler;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<h3 id="Compiler-js-中的基本流程"><a href="#Compiler-js-中的基本流程" class="headerlink" title="Compiler.js 中的基本流程"></a>Compiler.js 中的基本流程</h3><p>编译器实例类内部逻辑在 <a target="_blank" rel="noopener" href="https://github.com/webpack/webpack/blob/webpack-4/lib/Compiler.js">Compiler.js</a> 中，这里分析抽象 compiler.run 函数，了解其主要的执行流程：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Compiler</span> <span class="keyword">extends</span> <span class="title">Tapable</span> </span>&#123;</span><br><span class="line">  <span class="function"><span class="title">constructor</span>(<span class="params"></span>)</span> &#123;&#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="title">watch</span>(<span class="params">watchOptions, handler</span>)</span> &#123;&#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="title">run</span>(<span class="params">callback</span>)</span> &#123;</span><br><span class="line">    <span class="keyword">const</span> finalCallback = <span class="function">(<span class="params">err, stats</span>) =&gt;</span> &#123;&#125;;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">const</span> onCompiled = <span class="function">(<span class="params">err, compilation</span>) =&gt;</span> &#123;</span><br><span class="line">      <span class="keyword">if</span> (err) <span class="keyword">return</span> finalCallback(err);</span><br><span class="line"></span><br><span class="line">      <span class="comment">// ...</span></span><br><span class="line"></span><br><span class="line">      <span class="built_in">this</span>.emitAssets(compilation, <span class="function">(<span class="params">err</span>) =&gt;</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (err) <span class="keyword">return</span> finalCallback(err);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// ...</span></span><br><span class="line"></span><br><span class="line">        <span class="built_in">this</span>.emitRecords(<span class="function">(<span class="params">err</span>) =&gt;</span> &#123;</span><br><span class="line">          <span class="keyword">if</span> (err) <span class="keyword">return</span> finalCallback(err);</span><br><span class="line"></span><br><span class="line">          <span class="comment">// ...</span></span><br><span class="line"></span><br><span class="line">          <span class="keyword">const</span> stats = <span class="keyword">new</span> Stats(compilation);</span><br><span class="line">          stats.startTime = startTime;</span><br><span class="line">          stats.endTime = <span class="built_in">Date</span>.now();</span><br><span class="line">          <span class="built_in">this</span>.hooks.done.callAsync(stats, <span class="function">(<span class="params">err</span>) =&gt;</span> &#123;</span><br><span class="line">            <span class="keyword">if</span> (err) <span class="keyword">return</span> finalCallback(err);</span><br><span class="line">            <span class="keyword">return</span> finalCallback(<span class="literal">null</span>, stats);</span><br><span class="line">          &#125;);</span><br><span class="line">        &#125;);</span><br><span class="line">      &#125;);</span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 执行切入点</span></span><br><span class="line">    <span class="built_in">this</span>.hooks.beforeRun.callAsync(<span class="built_in">this</span>, <span class="function">(<span class="params">err</span>) =&gt;</span> &#123;</span><br><span class="line">      <span class="keyword">if</span> (err) <span class="keyword">return</span> finalCallback(err);</span><br><span class="line"></span><br><span class="line">      <span class="built_in">this</span>.hooks.run.callAsync(<span class="built_in">this</span>, <span class="function">(<span class="params">err</span>) =&gt;</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (err) <span class="keyword">return</span> finalCallback(err);</span><br><span class="line"></span><br><span class="line">        <span class="built_in">this</span>.readRecords(<span class="function">(<span class="params">err</span>) =&gt;</span> &#123;</span><br><span class="line">          <span class="keyword">if</span> (err) <span class="keyword">return</span> finalCallback(err);</span><br><span class="line"></span><br><span class="line">          <span class="built_in">this</span>.compile(onCompiled);</span><br><span class="line">        &#125;);</span><br><span class="line">      &#125;);</span><br><span class="line">    &#125;);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="title">readRecords</span>(<span class="params">callback</span>)</span> &#123;&#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="title">compile</span>(<span class="params">callback</span>)</span> &#123;</span><br><span class="line">    <span class="keyword">const</span> params = <span class="built_in">this</span>.newCompilationParams();</span><br><span class="line">    <span class="built_in">this</span>.hooks.beforeCompile.callAsync(params, <span class="function">(<span class="params">err</span>) =&gt;</span> &#123;</span><br><span class="line">      <span class="keyword">if</span> (err) <span class="keyword">return</span> callback(err);</span><br><span class="line"></span><br><span class="line">      <span class="built_in">this</span>.hooks.compile.call(params);</span><br><span class="line"></span><br><span class="line">      <span class="keyword">const</span> compilation = <span class="built_in">this</span>.newCompilation(params);</span><br><span class="line"></span><br><span class="line">      <span class="built_in">this</span>.hooks.make.callAsync(compilation, <span class="function">(<span class="params">err</span>) =&gt;</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (err) <span class="keyword">return</span> callback(err);</span><br><span class="line"></span><br><span class="line">        compilation.finish(<span class="function">(<span class="params">err</span>) =&gt;</span> &#123;</span><br><span class="line">          <span class="keyword">if</span> (err) <span class="keyword">return</span> callback(err);</span><br><span class="line"></span><br><span class="line">          compilation.seal(<span class="function">(<span class="params">err</span>) =&gt;</span> &#123;</span><br><span class="line">            <span class="keyword">if</span> (err) <span class="keyword">return</span> callback(err);</span><br><span class="line"></span><br><span class="line">            <span class="built_in">this</span>.hooks.afterCompile.callAsync(compilation, <span class="function">(<span class="params">err</span>) =&gt;</span> &#123;</span><br><span class="line">              <span class="keyword">if</span> (err) <span class="keyword">return</span> callback(err);</span><br><span class="line"></span><br><span class="line">              <span class="keyword">return</span> callback(<span class="literal">null</span>, compilation);</span><br><span class="line">            &#125;);</span><br><span class="line">          &#125;);</span><br><span class="line">        &#125;);</span><br><span class="line">      &#125;);</span><br><span class="line">    &#125;);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="title">newCompilationParams</span>(<span class="params"></span>)</span> &#123;&#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="title">newCompilation</span>(<span class="params">params</span>)</span> &#123;&#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="title">emitAssets</span>(<span class="params">compilation, callback</span>)</span> &#123;&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ol>
+<li><strong>readRecords</strong>：读取构建记录，用于分包缓存优化，在未设置 recordsPath 时直接返回。</li>
+<li><strong>compile 的主要构建流程</strong>：，涉及以下几各环节：<ol>
+<li><strong>newCompilationParams</strong>：创建 NormalModule 和 ContextModule 的工厂实例，用于创建后续模块实例。</li>
+<li><strong>newCompilation</strong>：创建编译过程 Compilation 实例。</li>
+<li><strong>compiler.hooks.make.callAsync</strong>：触发 make 的 Hook，执行所有监听 make 的插件。</li>
+<li><strong>compilation.finish</strong>：编译过程实例的 finish 方法，触发相应的 Hook 并报告构建模块的错误和警告。</li>
+<li><strong>compilation.seal</strong>：编译过程实例的 seal 方法。</li>
+</ol>
+</li>
+<li><strong>emitAssets</strong>：调用 compilation.getAssets()，将产物内容写入输出文件中。</li>
+<li><strong>emitRecords</strong>：对应第一步的 readRecords，用于写入构建记录，在未设置 recordsPath 时直接返回。</li>
+</ol>
+<blockquote>
+<p>我们可以看到，即使代码经过抽象简化，仍然存在不少的逻辑代码，阅读的方法是从切入点开始，跳过定义的回调函数，直接看执行部分，这样就会形成一条明确的函数调用链，这会对理解整个过程有很大帮助。</p>
+</blockquote>
+<h3 id="Compilation-js-中的基本流程"><a href="#Compilation-js-中的基本流程" class="headerlink" title="Compilation.js 中的基本流程"></a>Compilation.js 中的基本流程</h3><p>这部分的源码位于 <a target="_blank" rel="noopener" href="https://github.com/webpack/webpack/blob/webpack-4/lib/Compilation.js">Compilation.js</a> 中。在编译执行过程中，我们主要从外部调用的是两个方法：</p>
+<ul>
+<li><strong>addEntry</strong>：从 entry 开始递归添加和构建模块。</li>
+<li><strong>seal</strong>：冻结模块，进行一系列优化，以及触发各优化阶段的 Hooks。</li>
+</ul>
+<p>以上就是执行 Webpack 构建时的基本流程，这里再稍做总结：</p>
+<ol>
+<li>创建编译器 Compiler 实例。</li>
+<li>根据 Webpack 参数加载参数中的插件，以及程序内置插件。</li>
+<li>执行编译流程：创建编译过程 Compilation 实例，从入口递归添加与构建模块，模块构建完成后冻结模块，并进行优化。</li>
+<li>构建与优化过程结束后提交产物，将产物内容写到输出文件中。</li>
+</ol>
+<h2 id="Webpack-生命周期"><a href="#Webpack-生命周期" class="headerlink" title="Webpack 生命周期"></a>Webpack 生命周期</h2><p>Webpack 工作流程中最核心的两个模块：<strong>Compiler</strong> 和 <strong>Compilation</strong> 都扩展自 Tapable 类，用于实现工作流程中的生命周期划分，以便在不同的生命周期节点上注册和调用插件。</p>
+<h3 id="Webpack-中的插件"><a href="#Webpack-中的插件" class="headerlink" title="Webpack 中的插件"></a>Webpack 中的插件</h3><p>Webpack 引擎基于插件系统搭建而成，不同的插件各司其职，在 Webpack 工作流程的某一个或多个时间点上，对构建流程的某个方面进行处理。Webpack 就是通过这样的工作方式，在各生命周期中，经一系列插件将源代码逐步变成最后的产物代码。</p>
+<p>一个 Webpack 插件是一个包含 <strong>apply</strong> 方法的 JavaScript 对象。这个 apply 方法的执行逻辑，通常是注册 Webpack 工作流程中某一生命周期 Hook，并添加对应 Hook 中该插件的实际处理函数。</p>
+<h3 id="Hooks-的使用方式"><a href="#Hooks-的使用方式" class="headerlink" title="Hooks 的使用方式"></a>Hooks 的使用方式</h3><p>Hook 的使用分为四步：</p>
+<ol>
+<li>在构造函数中定义 Hook 类型和参数，生成 Hook 对象。</li>
+<li>在插件中注册 Hook，添加对应 Hook 触发时的执行函数。</li>
+<li>生成插件实例，运行 apply 方法。</li>
+<li>在运行到对应生命周期节点时调用 Hook，执行注册过的插件的回调函数。</li>
+</ol>
+<p>如下面的代码所示：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// lib/Compiler.js</span></span><br><span class="line"><span class="built_in">this</span>.hooks = &#123;</span><br><span class="line">  ...</span><br><span class="line">  make: <span class="keyword">new</span> SyncHook([<span class="string">&#x27;compilation&#x27;</span>, <span class="string">&#x27;params&#x27;</span>]), <span class="comment">// 1.定义Hook</span></span><br><span class="line">  ...</span><br><span class="line">&#125;</span><br><span class="line">...</span><br><span class="line"><span class="built_in">this</span>.hooks.make.call(compilation, params); <span class="comment">// 4.调用Hook</span></span><br><span class="line">...</span><br><span class="line"></span><br><span class="line"><span class="comment">// lib/dependencies/CommonJsPlugin.js</span></span><br><span class="line"><span class="comment">// 2.在插件中注册Hook</span></span><br><span class="line">compiler.hooks.make.tap(<span class="string">&quot;CommonJSPlugin&quot;</span>, <span class="function">(<span class="params">compilation, &#123; contextModuleFactory, normalModuleFactory &#125;</span>) =&gt;</span> &#123;</span><br><span class="line">  ...</span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line"><span class="comment">// lib/WebpackOptionsApply.js</span></span><br><span class="line"><span class="comment">// 3.生成插件实例，运行apply方法</span></span><br><span class="line"><span class="keyword">new</span> CommonJsPlugin(options.module).apply(compiler);</span><br></pre></td></tr></table></figure>
+<p>通过这种方式，Webpack 将编译器和编译过程的生命周期节点提供给外部插件，从而搭建起弹性化的工作引擎。</p>
+<p>Hook 的类型按照同步或异步、是否接收上一插件的返回值等情况分为 9 种。不同类型的 Hook 接收注册的方法也不同，更多信息可参照<a target="_blank" rel="noopener" href="https://github.com/webpack/tapable#tapable">官方文档</a>。</p>
+<h3 id="Compiler-Hooks"><a href="#Compiler-Hooks" class="headerlink" title="Compiler Hooks"></a>Compiler Hooks</h3><p>构建器实例的生命周期可以分为 3 个阶段：初始化阶段、构建过程阶段、产物生成阶段。</p>
+<p><strong>初始化阶段</strong></p>
+<ul>
+<li>environment、afterEnvironment：在创建完 compiler 实例且执行了配置内定义的插件的 apply 方法后触发。</li>
+<li>entryOption、afterPlugins、afterResolvers：在 WebpackOptionsApply.js 中，这 3 个 Hooks 分别在执行 EntryOptions 插件和其他 Webpack 内置插件，以及解析了 resolver 配置后触发。</li>
+</ul>
+<p><strong>构建过程阶段</strong></p>
+<ul>
+<li>normalModuleFactory、contextModuleFactory：在两类模块工厂创建后触发。</li>
+<li>beforeRun、run、watchRun、beforeCompile、compile、thisCompilation、compilation、make、afterCompile：在运行构建过程中触发。</li>
+</ul>
+<p><strong>产物生成阶段</strong></p>
+<ul>
+<li>shouldEmit、emit、assetEmitted、afterEmit：在构建完成后，处理产物的过程中触发。</li>
+<li>failed、done：在达到最终结果状态时触发。</li>
+</ul>
+<h3 id="Compilation-Hooks"><a href="#Compilation-Hooks" class="headerlink" title="Compilation Hooks"></a>Compilation Hooks</h3><p>构建过程实例的生命周期我们分为 2 个阶段：构建阶段、优化阶段。</p>
+<p><strong>构建阶段</strong></p>
+<ul>
+<li>addEntry、failedEntry、succeedEntry：在添加入口和添加入口结束时触发（Webpack 5 中移除）。</li>
+<li>buildModule、rebuildModule、finishRebuildingModule、failedModule、succeedModule：在构建单个模块时触发。</li>
+<li>finishModules：在所有模块构建完成后触发。</li>
+</ul>
+<p><strong>优化阶段</strong></p>
+<ul>
+<li>seal、needAdditionalSeal、unseal、afterSeal：分别在 seal 函数的起始和结束的位置触发。</li>
+<li>optimizeDependencies、afterOptimizeDependencies：触发优化依赖的插件执行，例如 FlagDependencyUsagePlugin。</li>
+<li>beforeChunks、afterChunks：分别在生成 Chunks 的过程的前后触发。</li>
+<li>optimize：在生成 chunks 之后，开始执行优化处理的阶段触发。</li>
+<li>optimizeModule、afterOptimizeModule：在优化模块过程的前后触发。</li>
+<li>optimizeChunks、afterOptimizeChunks：在优化 Chunk 过程的前后触发，用于 Tree Shaking。</li>
+<li>optimizeTree、afterOptimizeTree：在优化模块和 Chunk 树过程的前后触发。</li>
+<li>optimizeChunkModules、afterOptimizeChunkModules：在优化 ChunkModules 的过程前后触发，例如 ModuleConcatenationPlugin，利用这一 Hook 来做 Scope Hoisting 的优化。</li>
+<li>shouldRecord、recordModules、recordChunks、recordHash：在 shouldRecord 返回为 true 的情况下，依次触发 recordModules、recordChunks、recordHash。</li>
+<li>reviveModules、beforeModuleIds、moduleIds、optimizeModuleIds、afterOptimizeModuleIds：在生成模块 Id 过程的前后触发。</li>
+<li>reviveChunks、beforeChunkIds、optimizeChunkIds、afterOptimizeChunkIds：在生成 ChunkId 过程的前后触发。</li>
+<li>beforeHash、afterHash：在生成模块与 Chunk 的 hash 过程的前后触发。</li>
+<li>beforeModuleAssets、moduleAsset：在生成模块产物数据过程的前后触发。</li>
+<li>shouldGenerateChunkAssets、beforeChunkAssets、chunkAsset：在创建 Chunk 产物数据过程的前后触发。</li>
+<li>additionalAssets、optimizeChunkAssets、afterOptimizeChunkAssets、optimizeAssets、afterOptimizeAssets：在优化产物过程的前后触发，例如在 TerserPlugin 的压缩代码插件的执行过程中，就用到了 optimizeChunkAssets。</li>
+</ul>
+<p><img src="https://s0.lgstatic.com/i/image/M00/4D/B4/Ciqc1F9bGtqAJo4uAABnYGwsyYs218.png"></p>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/archives/">Writing</a></li>
+         
+          <li><a href="/categories/">Category</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/search/">Search</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9F%BA%E6%9C%AC%E5%B7%A5%E4%BD%9C%E6%B5%81%E7%A8%8B"><span class="toc-number">1.</span> <span class="toc-text">基本工作流程</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#webpack-js-%E4%B8%AD%E7%9A%84%E5%9F%BA%E6%9C%AC%E6%B5%81%E7%A8%8B"><span class="toc-number">1.1.</span> <span class="toc-text">webpack.js 中的基本流程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Compiler-js-%E4%B8%AD%E7%9A%84%E5%9F%BA%E6%9C%AC%E6%B5%81%E7%A8%8B"><span class="toc-number">1.2.</span> <span class="toc-text">Compiler.js 中的基本流程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Compilation-js-%E4%B8%AD%E7%9A%84%E5%9F%BA%E6%9C%AC%E6%B5%81%E7%A8%8B"><span class="toc-number">1.3.</span> <span class="toc-text">Compilation.js 中的基本流程</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Webpack-%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F"><span class="toc-number">2.</span> <span class="toc-text">Webpack 生命周期</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Webpack-%E4%B8%AD%E7%9A%84%E6%8F%92%E4%BB%B6"><span class="toc-number">2.1.</span> <span class="toc-text">Webpack 中的插件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Hooks-%E7%9A%84%E4%BD%BF%E7%94%A8%E6%96%B9%E5%BC%8F"><span class="toc-number">2.2.</span> <span class="toc-text">Hooks 的使用方式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Compiler-Hooks"><span class="toc-number">2.3.</span> <span class="toc-text">Compiler Hooks</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Compilation-Hooks"><span class="toc-number">2.4.</span> <span class="toc-text">Compilation Hooks</span></a></li></ol></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://oxyzhg.cn/post/1a943f3e/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://oxyzhg.cn/post/1a943f3e/&text=webpack完整的构建流程"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://oxyzhg.cn/post/1a943f3e/&title=webpack完整的构建流程"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://oxyzhg.cn/post/1a943f3e/&is_video=false&description=webpack完整的构建流程"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=webpack完整的构建流程&body=Check out this article: https://oxyzhg.cn/post/1a943f3e/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://oxyzhg.cn/post/1a943f3e/&title=webpack完整的构建流程"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://oxyzhg.cn/post/1a943f3e/&title=webpack完整的构建流程"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://oxyzhg.cn/post/1a943f3e/&title=webpack完整的构建流程"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://oxyzhg.cn/post/1a943f3e/&title=webpack完整的构建流程"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://oxyzhg.cn/post/1a943f3e/&name=webpack完整的构建流程&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://oxyzhg.cn/post/1a943f3e/&t=webpack完整的构建流程"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy; 2021 Oxyzhg
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/archives/">Writing</a></li>
+         
+          <li><a href="/categories/">Category</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/search/">Search</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+
+<link rel="stylesheet" href="/lib/justified-gallery/css/justifiedGallery.min.css">
+
+
+    <!-- jquery -->
+
+<script src="/lib/jquery/jquery.min.js"></script>
+
+
+<script src="/lib/justified-gallery/js/jquery.justifiedGallery.min.js"></script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+<!-- Disqus Comments -->
+
+
+</body>
+</html>

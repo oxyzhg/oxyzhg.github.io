@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta name="description" content="rollup 基本配置rollup 采用 es6 原生的模块机制进行模块的打包构建，rollup 更着眼于未来，对 commonjs 模块机制不提供内置的支持，是一款更轻量的打包工具。rollup 比较适合打包 js 的 sdk 或者封装的框架等，例如，vue 源码就是 rollup 打包的；而 webpack 比较适合打包一些应用，例如 SPA 或者同构项目等等。 tree shaking 是">
+<meta property="og:type" content="article">
+<meta property="og:title" content="rollup基本配置">
+<meta property="og:url" content="https://oxyzhg.cn/post/7a834e97/index.html">
+<meta property="og:site_name" content="Oxyzhg">
+<meta property="og:description" content="rollup 基本配置rollup 采用 es6 原生的模块机制进行模块的打包构建，rollup 更着眼于未来，对 commonjs 模块机制不提供内置的支持，是一款更轻量的打包工具。rollup 比较适合打包 js 的 sdk 或者封装的框架等，例如，vue 源码就是 rollup 打包的；而 webpack 比较适合打包一些应用，例如 SPA 或者同构项目等等。 tree shaking 是">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2020-10-30T06:39:00.000Z">
+<meta property="article:modified_time" content="2021-01-08T02:08:34.621Z">
+<meta property="article:author" content="Oxyzhg">
+<meta property="article:tag" content="rollup">
+<meta name="twitter:card" content="summary">
+    
+    
+        
+          
+              <link rel="shortcut icon" href="/images/favicon.ico">
+          
+        
+        
+          
+            <link rel="icon" type="image/png" href="/images/logo.png" sizes="192x192">
+          
+        
+        
+          
+            <link rel="apple-touch-icon" sizes="180x180" href="/images/logo.png">
+          
+        
+    
+    <!-- title -->
+    <title>rollup基本配置</title>
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+      
+<link rel="stylesheet" href="/css/rtl.css">
+
+    
+    <!-- rss -->
+    
+    
+<meta name="generator" content="Hexo 5.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/archives/">Writing</a></li>
+         
+          <li><a href="/categories/">Category</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/search/">Search</a></li>
+        
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" href="/post/5cae23e2/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" href="/post/bf1c5ae8/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://oxyzhg.cn/post/7a834e97/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://oxyzhg.cn/post/7a834e97/&text=rollup基本配置"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://oxyzhg.cn/post/7a834e97/&title=rollup基本配置"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://oxyzhg.cn/post/7a834e97/&is_video=false&description=rollup基本配置"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=rollup基本配置&body=Check out this article: https://oxyzhg.cn/post/7a834e97/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://oxyzhg.cn/post/7a834e97/&title=rollup基本配置"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://oxyzhg.cn/post/7a834e97/&title=rollup基本配置"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://oxyzhg.cn/post/7a834e97/&title=rollup基本配置"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://oxyzhg.cn/post/7a834e97/&title=rollup基本配置"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://oxyzhg.cn/post/7a834e97/&name=rollup基本配置&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://oxyzhg.cn/post/7a834e97/&t=rollup基本配置"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#rollup-%E5%9F%BA%E6%9C%AC%E9%85%8D%E7%BD%AE"><span class="toc-number">1.</span> <span class="toc-text">rollup 基本配置</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%A0%B8%E5%BF%83%E5%8A%9F%E8%83%BD"><span class="toc-number">1.1.</span> <span class="toc-text">核心功能</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%BE%93%E5%85%A5-input"><span class="toc-number">1.1.1.</span> <span class="toc-text">输入 input</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%96%87%E4%BB%B6-output-file"><span class="toc-number">1.1.2.</span> <span class="toc-text">文件 output.file</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A0%BC%E5%BC%8F-output-format"><span class="toc-number">1.1.3.</span> <span class="toc-text">格式 output.format</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%94%9F%E6%88%90%E5%8C%85%E5%90%8D%E7%A7%B0-output-name"><span class="toc-number">1.1.4.</span> <span class="toc-text">生成包名称 output.name</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8F%92%E4%BB%B6-plugins"><span class="toc-number">1.1.5.</span> <span class="toc-text">插件 plugins</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A4%96%E9%93%BE-external"><span class="toc-number">1.1.6.</span> <span class="toc-text">外链 external</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%AB%98%E7%BA%A7%E9%85%8D%E7%BD%AE"><span class="toc-number">1.2.</span> <span class="toc-text">高级配置</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%90%AD%E9%85%8D-Babel-7"><span class="toc-number">1.2.1.</span> <span class="toc-text">搭配 Babel 7</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ESLint-%E6%A3%80%E6%9F%A5"><span class="toc-number">1.2.2.</span> <span class="toc-text">ESLint 检查</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%BC%E5%AE%B9-CommonJS"><span class="toc-number">1.2.3.</span> <span class="toc-text">兼容 CommonJS</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%A3%E7%A0%81%E5%8E%8B%E7%BC%A9"><span class="toc-number">1.2.4.</span> <span class="toc-text">代码压缩</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BC%96%E8%AF%91-TypeScript"><span class="toc-number">1.2.5.</span> <span class="toc-text">编译 TypeScript</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BC%96%E8%AF%91-JSX"><span class="toc-number">1.2.6.</span> <span class="toc-text">编译 JSX</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%94%AF%E6%8C%81-css-%E9%A2%84%E5%A4%84%E7%90%86%E5%99%A8"><span class="toc-number">1.2.7.</span> <span class="toc-text">支持 css 预处理器</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#rollup-vs-webpack"><span class="toc-number">1.3.</span> <span class="toc-text">rollup vs webpack</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-number">1.4.</span> <span class="toc-text">总结</span></a></li></ol></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        rollup基本配置
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">Kq</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2020-10-30T06:39:00.000Z" itemprop="datePublished">2020-10-30</time>
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fas fa-archive"></i>
+        <a class="category-link" href="/categories/%E5%89%8D%E7%AB%AF%E5%B7%A5%E7%A8%8B%E5%8C%96/">前端工程化</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link-link" href="/tags/rollup/" rel="tag">rollup</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <h1 id="rollup-基本配置"><a href="#rollup-基本配置" class="headerlink" title="rollup 基本配置"></a>rollup 基本配置</h1><p>rollup 采用 es6 原生的模块机制进行模块的打包构建，rollup 更着眼于未来，对 commonjs 模块机制不提供内置的支持，是一款更轻量的打包工具。rollup 比较适合打包 js 的 sdk 或者封装的框架等，例如，vue 源码就是 rollup 打包的；而 webpack 比较适合打包一些应用，例如 SPA 或者同构项目等等。</p>
+<p>tree shaking 是 rollup 除 es6 模块外的另一个核心卖点，当然这个特性在 webpack 中也有实现。tree-shaking 的优点毋庸多言了，结合 es6 模块，对代码进行静态分析，能更有效地剔除冗余的代码，减小 js 文件的大小。</p>
+<p>基本的 rollup.config.js 配置文件如下：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> &#123;</span><br><span class="line">  input: <span class="string">&#x27;src/main.js&#x27;</span>,</span><br><span class="line">  output: &#123;</span><br><span class="line">    file: <span class="string">&#x27;dist/js/main.min.js&#x27;</span>,</span><br><span class="line">    format: <span class="string">&#x27;umd&#x27;</span>,</span><br><span class="line">    name: <span class="string">&#x27;bundle&#x27;</span>,</span><br><span class="line">  &#125;,</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<h2 id="核心功能"><a href="#核心功能" class="headerlink" title="核心功能"></a>核心功能</h2><h3 id="输入-input"><a href="#输入-input" class="headerlink" title="输入 input"></a>输入 input</h3><p>**<br>打包的入口点</p>
+<h3 id="文件-output-file"><a href="#文件-output-file" class="headerlink" title="文件 output.file"></a>文件 output.file</h3><p>**<br>要写入的文件</p>
+<h3 id="格式-output-format"><a href="#格式-output-format" class="headerlink" title="格式 output.format"></a>格式 output.format</h3><p>生成包的格式是下列之一：</p>
+<ul>
+<li>amd— 异步模块定义，用于像 RequireJS 这样的模块加载器</li>
+<li>cjs — CommonJS，适用于 Node 和 Browserify/Webpack</li>
+<li>esm — 将软件包保存为 ES 模块文件，在现代浏览器中可以通过 <code>&lt;script type=module&gt;</code> 标签引入</li>
+<li>iife — 一个自动执行的功能，适合作为<code>&lt;script&gt;</code>标签。（如果要为应用程序创建一个捆绑包，您可能想要使用它，因为它会使文件大小变小）</li>
+<li>umd — 通用模块定义，以 <code>amd</code>，<code>cjs</code> 和 <code>iife</code> 为一体</li>
+<li>system — SystemJS 加载器格式</li>
+</ul>
+<h3 id="生成包名称-output-name"><a href="#生成包名称-output-name" class="headerlink" title="生成包名称 output.name"></a>生成包名称 output.name</h3><p><code>String</code> 变量名，代表你的 <code>iife</code>/<code>umd</code> 包，同一页上的其他脚本可以访问它。</p>
+<h3 id="插件-plugins"><a href="#插件-plugins" class="headerlink" title="插件 plugins"></a>插件 plugins</h3><p>插件对象 <code>数组 Array</code> (或一个插件对象)</p>
+<p>常用插件总结：</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://www.npmjs.com/package/@rollup/plugin-node-resolve">@rollup/plugin-node-resolve</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.npmjs.com/package/@rollup/plugin-commonjs">@rollup/plugin-commonjs</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.npmjs.com/package/@rollup/plugin-babel">@rollup/plugin-babel</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.npmjs.com/package/@rollup/plugin-eslint">@rollup/plugin-eslint</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.npmjs.com/package/@rollup/plugin-typescript">@rollup/plugin-typescript</a> (感觉不是很好用)</li>
+<li><a target="_blank" rel="noopener" href="https://www.npmjs.com/package/rollup-plugin-typescript2">rollup-plugin-typescript2</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.npmjs.com/package/rollup-plugin-terser">rollup-plugin-terser</a></li>
+</ul>
+<p>注意：官方提供的一些包，已经由原单仓单包变更为基于 monorepo 管理的单仓多包的形式，相应的包名称也发生了变化，且原仓库已不再维护，这边建议直接使用新版本依赖包。例如：rollup-plugin-node-resolve 依赖包名称已变更为 @rollup/plugin-node-resolve，具体请查阅 <a target="_blank" rel="noopener" href="https://github.com/rollup/plugins">rollup/plugins</a> 官方仓库。</p>
+<h3 id="外链-external"><a href="#外链-external" class="headerlink" title="外链 external"></a>外链 external</h3><h2 id="高级配置"><a href="#高级配置" class="headerlink" title="高级配置"></a>高级配置</h2><h3 id="搭配-Babel-7"><a href="#搭配-Babel-7" class="headerlink" title="搭配 Babel 7"></a>搭配 Babel 7</h3><p>rollup 的模块机制是 ES6 Modules，但并不会对 es6 其他的语法进行编译。因此如果要使用 es6 的语法进行开发，还需要使用 babel 来帮助我们将代码编译成 es5。</p>
+<p>使用 @rollup/plugin-babel 插件，同时也需要安装 @babel/core, @babel/preset-env 相关功能依赖包，并且配置 .babelrc 文件，就可以完成上述工作。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> babel <span class="keyword">from</span> <span class="string">&#x27;@rollup/plugin-babel&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> &#123;</span><br><span class="line">  plugins: [</span><br><span class="line">    babel(&#123;</span><br><span class="line">      exclude: <span class="string">&#x27;node_modules/**&#x27;</span>,</span><br><span class="line">    &#125;),</span><br><span class="line">  ],</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<h3 id="ESLint-检查"><a href="#ESLint-检查" class="headerlink" title="ESLint 检查"></a>ESLint 检查</h3><p>在代码中使用 linter 无疑是一个很好的决定，尤其是在团队协作开发的项目中，它会强制执行一致的编码规范来帮助我们捕捉一些棘手不易发现的问题。</p>
+<p>这里使用 @rollup/plugin-eslint 插件，在编译过程中检查代码。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> eslint <span class="keyword">from</span> <span class="string">&#x27;@rollup/plugin-eslint&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> &#123;</span><br><span class="line">  plugins: [</span><br><span class="line">    eslint(&#123;</span><br><span class="line">      exclude: [</span><br><span class="line">        (throwOnError: <span class="literal">true</span>),</span><br><span class="line">        (throwOnWarning: <span class="literal">true</span>),</span><br><span class="line">        (include: [<span class="string">&#x27;src/**&#x27;</span>]),</span><br><span class="line">        (exclude: [<span class="string">&#x27;node_modules/**&#x27;</span>]),</span><br><span class="line">      ],</span><br><span class="line">    &#125;),</span><br><span class="line">  ],</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>eslint 插件有两个属性需要说明：throwOnError 和 throwOnWarning 设置为 true 时，如果在 eslint 的检查过程中发现了 error 或 warning，就会抛出异常，阻止打包继续执行；如果设置为 false，就只会输出 eslint 检测结果，而不会停止打包。</p>
+<h3 id="兼容-CommonJS"><a href="#兼容-CommonJS" class="headerlink" title="兼容 CommonJS"></a>兼容 CommonJS</h3><p>npm 生态已经繁荣了多年，commonjs 规范作为 npm 的包规范，大量的 npm 包都是基于 commonjs 规范来开发的，因此在完美支持 es6 模块规范之前，我们仍旧需要兼容 commonjs 模块规范。</p>
+<p>rollup 官方提供了 @rollup/plugin-commonjs 插件，以便在编译过程中能正常使用 commonjs 依赖包，同时还会搭配 @rollup/plugin-resolve 插件使用，解析模块路径。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> resolve <span class="keyword">from</span> <span class="string">&#x27;@rollup/plugin-node-resolve&#x27;</span>;</span><br><span class="line"><span class="keyword">import</span> commonjs <span class="keyword">from</span> <span class="string">&#x27;@rollup/plugin-commonjs&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> &#123;</span><br><span class="line">  plugins: [</span><br><span class="line">    resolve(&#123;</span><br><span class="line">      extensions: [<span class="string">&#x27;.js&#x27;</span>, <span class="string">&#x27;.ts&#x27;</span>, <span class="string">&#x27;.tsx&#x27;</span>, <span class="string">&#x27;.json&#x27;</span>],</span><br><span class="line">      mainFields: [<span class="string">&#x27;module&#x27;</span>, <span class="string">&#x27;main&#x27;</span>, <span class="string">&#x27;browser&#x27;</span>],</span><br><span class="line">    &#125;),</span><br><span class="line">    commonjs(),</span><br><span class="line">    babel(&#123;</span><br><span class="line">      exclude: <span class="string">&#x27;node_modules/**&#x27;</span>,</span><br><span class="line">    &#125;),</span><br><span class="line">  ],</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<h3 id="代码压缩"><a href="#代码压缩" class="headerlink" title="代码压缩"></a>代码压缩</h3><p>在生产环境，我们常常需要配置代码压缩功能，这不仅能极大程度减少 bundle 体积大小，也能保护代码。</p>
+<p>压缩代码使用 rollup-plugin-terser 插件。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> resolve <span class="keyword">from</span> <span class="string">&#x27;@rollup/plugin-node-resolve&#x27;</span>;</span><br><span class="line"><span class="keyword">import</span> commonjs <span class="keyword">from</span> <span class="string">&#x27;@rollup/plugin-commonjs&#x27;</span>;</span><br><span class="line"><span class="keyword">import</span> babel <span class="keyword">from</span> <span class="string">&#x27;@rollup/plugin-babel&#x27;</span>;</span><br><span class="line"><span class="keyword">import</span> &#123; terser &#125; <span class="keyword">from</span> <span class="string">&#x27;rollup-plugin-terser&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> &#123;</span><br><span class="line">  plugins: [reoslve(), commonjs(), babel(), terser()],</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<h3 id="编译-TypeScript"><a href="#编译-TypeScript" class="headerlink" title="编译 TypeScript"></a>编译 TypeScript</h3><p>现在前端已经有很多程序是使用 typescript 开发，这得益于 ts 优秀的类型检查机制，备受好评。</p>
+<p>使用 rollup-plugin-typescript2 插件（@rollup/plugin-typescript 貌似有点问题），</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> typescript <span class="keyword">from</span> <span class="string">&#x27;rollup-plugin-typescript2&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> &#123;</span><br><span class="line">  plugins: [</span><br><span class="line">    typescript(&#123;</span><br><span class="line">      lib: [<span class="string">&#x27;es5&#x27;</span>, <span class="string">&#x27;es6&#x27;</span>, <span class="string">&#x27;dom&#x27;</span>],</span><br><span class="line">      target: <span class="string">&#x27;es5&#x27;</span>, <span class="comment">// 输出目标</span></span><br><span class="line">      noEmitOnError: <span class="literal">true</span>, <span class="comment">// 运行时是否验证ts错误</span></span><br><span class="line">    &#125;),</span><br><span class="line">  ],</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<h3 id="编译-JSX"><a href="#编译-JSX" class="headerlink" title="编译 JSX"></a>编译 JSX</h3><p>基于组件化开发，jsx 无疑是一种很好的开发方式，随着 vue3 发布，不管是 react 还是 vue 都对 jsx 有了很好的支持。vue@next 就是通过 rollup 打包的程序。</p>
+<p>如果是 vue3 开发的程序，还需要配置 babel @vue/babel-plugin-jsx 编译插件。同时，官方推荐 acorn-jsx JSX 解析器将源代码解析到 JSX AST。</p>
+<h3 id="支持-css-预处理器"><a href="#支持-css-预处理器" class="headerlink" title="支持 css 预处理器"></a>支持 css 预处理器</h3><p>现代 web 开发，scss/less/stylus 比纯 css 有更丰富的语法支持，更有利于工程化开发。</p>
+<p>使用 rollup-plugin-postcss 插件，搭配 cssnano 插件可将 Sass/Stylus/Less 文件打包。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> postcss <span class="keyword">from</span> <span class="string">&#x27;rollup-plugin-postcss&#x27;</span>;</span><br><span class="line"><span class="keyword">import</span> cssnano <span class="keyword">from</span> <span class="string">&#x27;cssnano&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> &#123;</span><br><span class="line">  plugins: [</span><br><span class="line">    postcss(&#123;</span><br><span class="line">      plugins: [cssnano],</span><br><span class="line">      extract: path.resolve(<span class="string">&#x27;dist/assets/style.css&#x27;</span>), <span class="comment">// only for v3</span></span><br><span class="line">    &#125;),</span><br><span class="line">  ],</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<h2 id="rollup-vs-webpack"><a href="#rollup-vs-webpack" class="headerlink" title="rollup vs webpack"></a>rollup vs webpack</h2><p>webpack 诞生的时候，为了解决 css、image 等静态文件的构建和使得代码能够按需加载实现了 code-splitting，在我们日常线上业务代码开发中，或多或少有一些静态资源需要打包，此时 rollup 显得不太适用。所以我们可以看到，在构建一些 lib 的时候可以选择 rollup，而在构建一些应用的时候，选择 webpack 更为合适。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>rollup 的配置是相对简单方便的，我们大概只需要关注项目打包的入口、输出文件、插件使用即可实现 rollup 配置。而 webpack 配置就相对复杂了，这也得益于 webpack 社区多年壮大，产生了较为完善的 webpack 生态。事实情况也是如此，rollup 更像是小众且名声在外的打包工具，适用于一些类库代码的构建，项目体量相对较小，并且更接近现代化前端开发模式，开发者不需要过多考虑代码的兼容性。</p>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/archives/">Writing</a></li>
+         
+          <li><a href="/categories/">Category</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/search/">Search</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#rollup-%E5%9F%BA%E6%9C%AC%E9%85%8D%E7%BD%AE"><span class="toc-number">1.</span> <span class="toc-text">rollup 基本配置</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%A0%B8%E5%BF%83%E5%8A%9F%E8%83%BD"><span class="toc-number">1.1.</span> <span class="toc-text">核心功能</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%BE%93%E5%85%A5-input"><span class="toc-number">1.1.1.</span> <span class="toc-text">输入 input</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%96%87%E4%BB%B6-output-file"><span class="toc-number">1.1.2.</span> <span class="toc-text">文件 output.file</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A0%BC%E5%BC%8F-output-format"><span class="toc-number">1.1.3.</span> <span class="toc-text">格式 output.format</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%94%9F%E6%88%90%E5%8C%85%E5%90%8D%E7%A7%B0-output-name"><span class="toc-number">1.1.4.</span> <span class="toc-text">生成包名称 output.name</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8F%92%E4%BB%B6-plugins"><span class="toc-number">1.1.5.</span> <span class="toc-text">插件 plugins</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A4%96%E9%93%BE-external"><span class="toc-number">1.1.6.</span> <span class="toc-text">外链 external</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%AB%98%E7%BA%A7%E9%85%8D%E7%BD%AE"><span class="toc-number">1.2.</span> <span class="toc-text">高级配置</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%90%AD%E9%85%8D-Babel-7"><span class="toc-number">1.2.1.</span> <span class="toc-text">搭配 Babel 7</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ESLint-%E6%A3%80%E6%9F%A5"><span class="toc-number">1.2.2.</span> <span class="toc-text">ESLint 检查</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%BC%E5%AE%B9-CommonJS"><span class="toc-number">1.2.3.</span> <span class="toc-text">兼容 CommonJS</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%A3%E7%A0%81%E5%8E%8B%E7%BC%A9"><span class="toc-number">1.2.4.</span> <span class="toc-text">代码压缩</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BC%96%E8%AF%91-TypeScript"><span class="toc-number">1.2.5.</span> <span class="toc-text">编译 TypeScript</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BC%96%E8%AF%91-JSX"><span class="toc-number">1.2.6.</span> <span class="toc-text">编译 JSX</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%94%AF%E6%8C%81-css-%E9%A2%84%E5%A4%84%E7%90%86%E5%99%A8"><span class="toc-number">1.2.7.</span> <span class="toc-text">支持 css 预处理器</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#rollup-vs-webpack"><span class="toc-number">1.3.</span> <span class="toc-text">rollup vs webpack</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-number">1.4.</span> <span class="toc-text">总结</span></a></li></ol></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://oxyzhg.cn/post/7a834e97/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://oxyzhg.cn/post/7a834e97/&text=rollup基本配置"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://oxyzhg.cn/post/7a834e97/&title=rollup基本配置"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://oxyzhg.cn/post/7a834e97/&is_video=false&description=rollup基本配置"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=rollup基本配置&body=Check out this article: https://oxyzhg.cn/post/7a834e97/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://oxyzhg.cn/post/7a834e97/&title=rollup基本配置"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://oxyzhg.cn/post/7a834e97/&title=rollup基本配置"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://oxyzhg.cn/post/7a834e97/&title=rollup基本配置"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://oxyzhg.cn/post/7a834e97/&title=rollup基本配置"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://oxyzhg.cn/post/7a834e97/&name=rollup基本配置&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://oxyzhg.cn/post/7a834e97/&t=rollup基本配置"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy; 2021 Oxyzhg
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/archives/">Writing</a></li>
+         
+          <li><a href="/categories/">Category</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/search/">Search</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+
+<link rel="stylesheet" href="/lib/justified-gallery/css/justifiedGallery.min.css">
+
+
+    <!-- jquery -->
+
+<script src="/lib/jquery/jquery.min.js"></script>
+
+
+<script src="/lib/justified-gallery/js/jquery.justifiedGallery.min.js"></script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+<!-- Disqus Comments -->
+
+
+</body>
+</html>
