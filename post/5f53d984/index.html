@@ -6,15 +6,15 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="HandheldFriendly" content="True">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
-    <meta name="description" content="GitHub Actions Deploy file: 12345678910111213141516171819202122232425262728293031name: Build and Deployon:  push:    branches:      - main  pull_request:    branches:      - mainjobs:  build-and-deplo">
+    <meta name="description" content="怎么用 Hexo 等搭建静态博客，业内已经有非常多的文章教程了，这里不再赘述。而使用 Github Actions 自动化部署静态博客，很多方案可行但差强人意。经过几次采坑后，我找到了静态博客自动化部署的答案。  GitHub Actions Deploy file: 12345678910111213141516171819202122232425262728293031name: Build">
 <meta property="og:type" content="article">
 <meta property="og:title" content="使用GitHub Actions增量部署静态博客">
 <meta property="og:url" content="https://oxyzhg.cn/post/5f53d984/index.html">
 <meta property="og:site_name" content="Oxyzhg">
-<meta property="og:description" content="GitHub Actions Deploy file: 12345678910111213141516171819202122232425262728293031name: Build and Deployon:  push:    branches:      - main  pull_request:    branches:      - mainjobs:  build-and-deplo">
+<meta property="og:description" content="怎么用 Hexo 等搭建静态博客，业内已经有非常多的文章教程了，这里不再赘述。而使用 Github Actions 自动化部署静态博客，很多方案可行但差强人意。经过几次采坑后，我找到了静态博客自动化部署的答案。  GitHub Actions Deploy file: 12345678910111213141516171819202122232425262728293031name: Build">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2021-01-08T02:16:39.000Z">
-<meta property="article:modified_time" content="2021-01-08T02:24:09.888Z">
+<meta property="article:modified_time" content="2021-01-08T03:14:50.546Z">
 <meta property="article:author" content="Oxyzhg">
 <meta property="article:tag" content="Hexo">
 <meta name="twitter:card" content="summary">
@@ -152,8 +152,13 @@
   
 
   <div class="content" itemprop="articleBody">
-    <p>GitHub Actions Deploy file:</p>
+    <blockquote>
+<p>怎么用 Hexo 等搭建静态博客，业内已经有非常多的文章教程了，这里不再赘述。而使用 Github Actions 自动化部署静态博客，很多方案可行但差强人意。经过几次采坑后，我找到了静态博客自动化部署的答案。</p>
+</blockquote>
+<p>GitHub Actions Deploy file:</p>
 <figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">name:</span> <span class="string">Build</span> <span class="string">and</span> <span class="string">Deploy</span></span><br><span class="line"></span><br><span class="line"><span class="attr">on:</span></span><br><span class="line">  <span class="attr">push:</span></span><br><span class="line">    <span class="attr">branches:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">main</span></span><br><span class="line">  <span class="attr">pull_request:</span></span><br><span class="line">    <span class="attr">branches:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">main</span></span><br><span class="line"></span><br><span class="line"><span class="attr">jobs:</span></span><br><span class="line">  <span class="attr">build-and-deploy:</span></span><br><span class="line">    <span class="attr">runs-on:</span> <span class="string">ubuntu-latest</span></span><br><span class="line">    <span class="attr">steps:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Checkout</span></span><br><span class="line">        <span class="attr">uses:</span> <span class="string">actions/checkout@v2.3.1</span></span><br><span class="line">        <span class="attr">with:</span></span><br><span class="line">          <span class="attr">persist-credentials:</span> <span class="literal">false</span></span><br><span class="line"></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Install</span> <span class="string">and</span> <span class="string">Build</span></span><br><span class="line">        <span class="attr">run:</span> <span class="string">|</span></span><br><span class="line">          <span class="string">npm</span> <span class="string">install</span></span><br><span class="line">          <span class="string">npx</span> <span class="string">hexo</span> <span class="string">generate</span></span><br><span class="line"></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Deploy</span></span><br><span class="line">        <span class="attr">uses:</span> <span class="string">JamesIves/github-pages-deploy-action@3.7.1</span></span><br><span class="line">        <span class="attr">with:</span></span><br><span class="line">          <span class="attr">ACCESS_TOKEN:</span> <span class="string">$&#123;&#123;</span> <span class="string">secrets.DEPLOY_TOKEN</span> <span class="string">&#125;&#125;</span></span><br><span class="line">          <span class="attr">BRANCH:</span> <span class="string">gh-pages</span></span><br><span class="line">          <span class="attr">FOLDER:</span> <span class="string">public</span></span><br><span class="line">          <span class="attr">REPOSITORY_NAME:</span> <span class="string">oxyzhg/oxyzhg.github.io</span></span><br></pre></td></tr></table></figure>
+<p>自动部署主要借助 <a target="_blank" rel="noopener" href="https://github.com/JamesIves/github-pages-deploy-action">JamesIves/github-pages-deploy-action</a> 提供的方案。它相较于其他部署方案有着更广范的适用性，并且其增量构建特性是 <code>hexo deploy</code> 不能达到的，这也是我选择它的一个重要原因。</p>
+
   </div>
 </article>
 
