@@ -6,15 +6,15 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="HandheldFriendly" content="True">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
-    <meta name="description" content="他想问什么Vue 核心特性是什么 响应式数据原理 为什么要采用异步渲染 nextTick 实现原理  Vue RouterVuex他想听什么响应式数据原理 追踪变化：通过劫持数据来追踪变化，在 vue2 中使用 Object.defineProperty 拦截，在 vue3 中使用 Proxy 拦截。 依赖收集：定义响应式数据后，若监听器使用该数据便触发 getter，然后 Watcher 收集数">
+    <meta name="description" content="他想问什么Vue 核心特性是什么 MVVM 原理 响应式数据原理 为什么要采用异步渲染 nextTick 实现原理  Vue RouterVuex他想听什么响应式数据原理 追踪变化：通过劫持数据来追踪变化，在 vue2 中使用 Object.defineProperty 拦截，在 vue3 中使用 Proxy 拦截。 依赖收集：定义响应式数据后，若监听器使用该数据便触发 getter，然后 Wat">
 <meta property="og:type" content="article">
 <meta property="og:title" content="问就跟他聊—Vue全家桶">
 <meta property="og:url" content="https://oxyzhg.cn/post/9b942608/index.html">
 <meta property="og:site_name" content="Oxyzhg">
-<meta property="og:description" content="他想问什么Vue 核心特性是什么 响应式数据原理 为什么要采用异步渲染 nextTick 实现原理  Vue RouterVuex他想听什么响应式数据原理 追踪变化：通过劫持数据来追踪变化，在 vue2 中使用 Object.defineProperty 拦截，在 vue3 中使用 Proxy 拦截。 依赖收集：定义响应式数据后，若监听器使用该数据便触发 getter，然后 Watcher 收集数">
+<meta property="og:description" content="他想问什么Vue 核心特性是什么 MVVM 原理 响应式数据原理 为什么要采用异步渲染 nextTick 实现原理  Vue RouterVuex他想听什么响应式数据原理 追踪变化：通过劫持数据来追踪变化，在 vue2 中使用 Object.defineProperty 拦截，在 vue3 中使用 Proxy 拦截。 依赖收集：定义响应式数据后，若监听器使用该数据便触发 getter，然后 Wat">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2021-01-09T03:55:32.000Z">
-<meta property="article:modified_time" content="2021-01-09T15:42:05.757Z">
+<meta property="article:modified_time" content="2021-01-10T15:24:00.107Z">
 <meta property="article:author" content="Oxyzhg">
 <meta property="article:tag" content="vue">
 <meta name="twitter:card" content="summary">
@@ -108,7 +108,7 @@
 
     </div>
     <div id="toc">
-      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%96%E6%83%B3%E9%97%AE%E4%BB%80%E4%B9%88"><span class="toc-number">1.</span> <span class="toc-text">他想问什么</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Vue"><span class="toc-number">1.1.</span> <span class="toc-text">Vue</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Vue-Router"><span class="toc-number">1.2.</span> <span class="toc-text">Vue Router</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Vuex"><span class="toc-number">1.3.</span> <span class="toc-text">Vuex</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%96%E6%83%B3%E5%90%AC%E4%BB%80%E4%B9%88"><span class="toc-number">2.</span> <span class="toc-text">他想听什么</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%93%8D%E5%BA%94%E5%BC%8F%E6%95%B0%E6%8D%AE%E5%8E%9F%E7%90%86"><span class="toc-number">2.1.</span> <span class="toc-text">响应式数据原理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#nextTick-%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86"><span class="toc-number">2.2.</span> <span class="toc-text">nextTick 实现原理</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BD%A0%E5%BE%97%E7%9F%A5%E9%81%93%E4%BB%80%E4%B9%88"><span class="toc-number">3.</span> <span class="toc-text">你得知道什么</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%9B%B8%E5%85%B3%E8%B5%84%E6%96%99"><span class="toc-number">4.</span> <span class="toc-text">相关资料</span></a></li></ol>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%96%E6%83%B3%E9%97%AE%E4%BB%80%E4%B9%88"><span class="toc-number">1.</span> <span class="toc-text">他想问什么</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Vue"><span class="toc-number">1.1.</span> <span class="toc-text">Vue</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Vue-Router"><span class="toc-number">1.2.</span> <span class="toc-text">Vue Router</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Vuex"><span class="toc-number">1.3.</span> <span class="toc-text">Vuex</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%96%E6%83%B3%E5%90%AC%E4%BB%80%E4%B9%88"><span class="toc-number">2.</span> <span class="toc-text">他想听什么</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%93%8D%E5%BA%94%E5%BC%8F%E6%95%B0%E6%8D%AE%E5%8E%9F%E7%90%86"><span class="toc-number">2.1.</span> <span class="toc-text">响应式数据原理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BC%82%E6%AD%A5%E6%9B%B4%E6%96%B0-%E6%B8%B2%E6%9F%93%E5%8E%9F%E5%9B%A0"><span class="toc-number">2.2.</span> <span class="toc-text">异步更新&#x2F;渲染原因</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#nextTick-%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86"><span class="toc-number">2.3.</span> <span class="toc-text">nextTick 实现原理</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BD%A0%E5%BE%97%E7%9F%A5%E9%81%93%E4%BB%80%E4%B9%88"><span class="toc-number">3.</span> <span class="toc-text">你得知道什么</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%9B%B8%E5%85%B3%E8%B5%84%E6%96%99"><span class="toc-number">4.</span> <span class="toc-text">相关资料</span></a></li></ol>
     </div>
   </span>
 </div>
@@ -127,7 +127,7 @@
 
     <div class="meta">
       <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
-        <span itemprop="name">Kq</span>
+        <span itemprop="name">Oxyzhg</span>
       </span>
       
     <div class="postdate">
@@ -159,6 +159,7 @@
   <div class="content" itemprop="articleBody">
     <h2 id="他想问什么"><a href="#他想问什么" class="headerlink" title="他想问什么"></a>他想问什么</h2><h3 id="Vue"><a href="#Vue" class="headerlink" title="Vue"></a>Vue</h3><ol>
 <li>核心特性是什么</li>
+<li>MVVM 原理</li>
 <li>响应式数据原理</li>
 <li>为什么要采用异步渲染</li>
 <li>nextTick 实现原理</li>
@@ -168,6 +169,7 @@
 <li>依赖收集：定义响应式数据后，若监听器使用该数据便触发 getter，然后 Watcher 收集数据发布者，Dep 收集数据订阅者。</li>
 <li>派发更新：当数据模型发生变化，即触发 setter，然后数据发布者 Dep 会通知数据收集者 Watcher，执行 <code>watcher.update</code> 进行更新。</li>
 </ol>
+<h3 id="异步更新-渲染原因"><a href="#异步更新-渲染原因" class="headerlink" title="异步更新/渲染原因"></a>异步更新/渲染原因</h3><p>Vue 在更新 DOM 时是异步执行的。只要侦听到数据变化，Vue 将开启一个队列，并缓冲在同一事件循环中发生的所有数据变更。如果同一个 watcher 被多次触发，只会被推入到队列中一次。这种在缓冲时去除重复数据能避免不必要的计算和 DOM 操作。然后，在下一个的事件循环 tick 中，Vue 刷新队列并执行实际 (已去重的) 工作。Vue 在内部对异步队列尝试使用原生的 <code>Promise.then</code>、<code>MutationObserver</code> 和 <code>setImmediate</code>，如果执行环境不支持，则会采用 <code>setTimeout(fn, 0)</code> 代替。</p>
 <h3 id="nextTick-实现原理"><a href="#nextTick-实现原理" class="headerlink" title="nextTick 实现原理"></a>nextTick 实现原理</h3><p>该实现使用了事件循环的特性，先是将待执行函数缓存起来，同时使用能够产生异步任务的方法生成异步任务，等同步代码执行完成后，该异步任务会执行并清空缓存的待执行函数。</p>
 <p>其中产生异步任务的方法(<code>Promise.then</code>, <code>MutationObservable</code>, <code>setImmediate</code>, <code>setTimeout</code>)会根据环境嗅探，最终确定使用哪一个，可能是 microtask 也可能是 macrotask，前两个属于微任务，后两个属于宏任务。</p>
 <h2 id="你得知道什么"><a href="#你得知道什么" class="headerlink" title="你得知道什么"></a>你得知道什么</h2><ul>
@@ -175,7 +177,12 @@
 <li>响应式数据原理，简单来说是劫持数据 getter/setter 进行依赖收集和派发更新。</li>
 <li>nextTick 实现原理，简单来说是利用了事件循环的特性。</li>
 </ul>
-<h2 id="相关资料"><a href="#相关资料" class="headerlink" title="相关资料"></a>相关资料</h2>
+<h2 id="相关资料"><a href="#相关资料" class="headerlink" title="相关资料"></a>相关资料</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://cn.vuejs.org/v2/guide/reactivity.html">深入响应式原理</a></li>
+<li><a target="_blank" rel="noopener" href="https://cn.vuejs.org/v2/guide/reactivity.html#%E5%BC%82%E6%AD%A5%E6%9B%B4%E6%96%B0%E9%98%9F%E5%88%97">深入响应式原理-异步更新队列</a></li>
+<li><a target="_blank" rel="noopener" href="https://juejin.cn/post/6857669921166491662">图解 Vue 响应式原理</a></li>
+</ul>
+
   </div>
 </article>
 
@@ -202,7 +209,7 @@
     </div>
 
     <div id="toc-footer" style="display: none">
-      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%96%E6%83%B3%E9%97%AE%E4%BB%80%E4%B9%88"><span class="toc-number">1.</span> <span class="toc-text">他想问什么</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Vue"><span class="toc-number">1.1.</span> <span class="toc-text">Vue</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Vue-Router"><span class="toc-number">1.2.</span> <span class="toc-text">Vue Router</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Vuex"><span class="toc-number">1.3.</span> <span class="toc-text">Vuex</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%96%E6%83%B3%E5%90%AC%E4%BB%80%E4%B9%88"><span class="toc-number">2.</span> <span class="toc-text">他想听什么</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%93%8D%E5%BA%94%E5%BC%8F%E6%95%B0%E6%8D%AE%E5%8E%9F%E7%90%86"><span class="toc-number">2.1.</span> <span class="toc-text">响应式数据原理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#nextTick-%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86"><span class="toc-number">2.2.</span> <span class="toc-text">nextTick 实现原理</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BD%A0%E5%BE%97%E7%9F%A5%E9%81%93%E4%BB%80%E4%B9%88"><span class="toc-number">3.</span> <span class="toc-text">你得知道什么</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%9B%B8%E5%85%B3%E8%B5%84%E6%96%99"><span class="toc-number">4.</span> <span class="toc-text">相关资料</span></a></li></ol>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%96%E6%83%B3%E9%97%AE%E4%BB%80%E4%B9%88"><span class="toc-number">1.</span> <span class="toc-text">他想问什么</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Vue"><span class="toc-number">1.1.</span> <span class="toc-text">Vue</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Vue-Router"><span class="toc-number">1.2.</span> <span class="toc-text">Vue Router</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Vuex"><span class="toc-number">1.3.</span> <span class="toc-text">Vuex</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%96%E6%83%B3%E5%90%AC%E4%BB%80%E4%B9%88"><span class="toc-number">2.</span> <span class="toc-text">他想听什么</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%93%8D%E5%BA%94%E5%BC%8F%E6%95%B0%E6%8D%AE%E5%8E%9F%E7%90%86"><span class="toc-number">2.1.</span> <span class="toc-text">响应式数据原理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BC%82%E6%AD%A5%E6%9B%B4%E6%96%B0-%E6%B8%B2%E6%9F%93%E5%8E%9F%E5%9B%A0"><span class="toc-number">2.2.</span> <span class="toc-text">异步更新&#x2F;渲染原因</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#nextTick-%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86"><span class="toc-number">2.3.</span> <span class="toc-text">nextTick 实现原理</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BD%A0%E5%BE%97%E7%9F%A5%E9%81%93%E4%BB%80%E4%B9%88"><span class="toc-number">3.</span> <span class="toc-text">你得知道什么</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%9B%B8%E5%85%B3%E8%B5%84%E6%96%99"><span class="toc-number">4.</span> <span class="toc-text">相关资料</span></a></li></ol>
     </div>
 
     <div id="share-footer" style="display: none">
