@@ -1,6 +1,6 @@
 ---
 title: tree-shaking
-author: Kq
+author: Oxyzhg
 categories: 前端工程化
 tags:
   - TreeShaking

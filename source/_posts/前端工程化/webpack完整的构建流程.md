@@ -1,6 +1,6 @@
 ---
 title: webpack完整的构建流程
-author: Kq
+author: Oxyzhg
 categories: 前端工程化
 tags:
   - webpack

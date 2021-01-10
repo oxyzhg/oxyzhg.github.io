@@ -1,6 +1,6 @@
 ---
 title: rollup+vue3+ts组件打包实践
-author: Kq
+author: Oxyzhg
 categories: 前端工程化
 tags:
   - rollup

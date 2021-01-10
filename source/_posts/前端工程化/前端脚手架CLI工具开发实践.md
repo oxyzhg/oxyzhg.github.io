@@ -1,6 +1,6 @@
 ---
 title: 前端脚手架CLI工具开发实践
-author: Kq
+author: Oxyzhg
 categories: 前端工程化
 tags:
   - 前端脚手架

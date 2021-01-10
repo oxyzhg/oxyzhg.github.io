@@ -1,6 +1,6 @@
 ---
 title: 使用GitHub Actions增量部署静态博客
-author: Kq
+author: Oxyzhg
 tags: Hexo
 abbrlink: 5f53d984
 date: 2021-01-08 10:16:39

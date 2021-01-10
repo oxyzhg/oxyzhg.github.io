@@ -1,6 +1,6 @@
 ---
 title: 从vue源码解读生命周期
-author: Kq
+author: Oxyzhg
 categories: vue
 tags:
   - vue

@@ -1,6 +1,6 @@
 ---
 title: 基于lerna管理monorepo项目实践
-author: Kq
+author: Oxyzhg
 categories: 前端工程化
 tags:
   - lerna

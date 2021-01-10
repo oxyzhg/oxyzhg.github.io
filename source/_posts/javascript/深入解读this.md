@@ -1,6 +1,6 @@
 ---
 title: 深入解读this
-author: Kq
+author: Oxyzhg
 categories: javascript
 tags:
   - javascript

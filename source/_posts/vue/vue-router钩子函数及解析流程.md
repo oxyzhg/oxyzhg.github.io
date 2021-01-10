@@ -1,6 +1,6 @@
 ---
 title: vue-router钩子函数及解析流程
-author: Kq
+author: Oxyzhg
 categories: vue
 tags:
   - vue

@@ -1,6 +1,6 @@
 ---
 title: vue组件通信方式总结
-author: Kq
+author: Oxyzhg
 categories: vue
 tags:
   - vue

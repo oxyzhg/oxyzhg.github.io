@@ -1,6 +1,6 @@
 ---
 title: webpack打包文件分析
-author: Kq
+author: Oxyzhg
 categories: 前端工程化
 tags:
   - webpack

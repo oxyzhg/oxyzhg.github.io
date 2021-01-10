@@ -1,6 +1,6 @@
 ---
 title: rollup基本配置
-author: Kq
+author: Oxyzhg
 categories: 前端工程化
 tags:
   - rollup

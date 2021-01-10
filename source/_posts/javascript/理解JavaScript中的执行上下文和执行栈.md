@@ -1,6 +1,6 @@
 ---
 title: 理解JavaScript中的执行上下文和执行栈
-author: Kq
+author: Oxyzhg
 categories: javascript
 tags:
   - javascript

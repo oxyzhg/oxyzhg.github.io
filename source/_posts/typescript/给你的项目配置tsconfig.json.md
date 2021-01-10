@@ -1,6 +1,6 @@
 ---
 title: 给你的项目配置tsconfig.json
-author: Kq
+author: Oxyzhg
 categories: typescript
 tags:
   - typescript

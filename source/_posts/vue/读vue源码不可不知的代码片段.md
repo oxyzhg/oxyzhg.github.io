@@ -1,6 +1,6 @@
 ---
 title: 读vue源码不可不知的代码片段
-author: Kq
+author: Oxyzhg
 categories: vue
 tags:
   - vue

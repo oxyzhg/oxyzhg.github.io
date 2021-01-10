@@ -1,6 +1,6 @@
 ---
 title: {{ title }} - 草稿
-author: Kq
+author: Oxyzhg
 categories:
 tags:
 date: {{ date }}

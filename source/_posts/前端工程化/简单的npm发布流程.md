@@ -1,6 +1,6 @@
 ---
 title: 简单的npm发布流程
-author: Kq
+author: Oxyzhg
 categories: 前端工程化
 tags:
   - npm
