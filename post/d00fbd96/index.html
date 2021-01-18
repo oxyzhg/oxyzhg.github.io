@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta name="description" content="写在前面现今的 web 开发通过前后端分离的技术拆分为了 web 后端开发与 web 前端开发，值得指出的是，web 前端开发早已不是传统意义上的开发模式了，转而变成了 web 客户端开发，有过客户端开发经验的同学应该知道这两者间的差别，客户端开发关注的是：  应用的生命周期 组件化 开发模式与打包方法  组件化是客户端开发最重要的内容，设计一套复用度高、扩展性好的组件系统，可以显著提高开发效率，">
+<meta property="og:type" content="article">
+<meta property="og:title" content="组件化在项目中的实践">
+<meta property="og:url" content="https://oxyzhg.cn/post/d00fbd96/index.html">
+<meta property="og:site_name" content="Oxyzhg">
+<meta property="og:description" content="写在前面现今的 web 开发通过前后端分离的技术拆分为了 web 后端开发与 web 前端开发，值得指出的是，web 前端开发早已不是传统意义上的开发模式了，转而变成了 web 客户端开发，有过客户端开发经验的同学应该知道这两者间的差别，客户端开发关注的是：  应用的生命周期 组件化 开发模式与打包方法  组件化是客户端开发最重要的内容，设计一套复用度高、扩展性好的组件系统，可以显著提高开发效率，">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2020-10-09T01:39:26.000Z">
+<meta property="article:modified_time" content="2021-01-18T01:38:19.867Z">
+<meta property="article:author" content="Oxyzhg">
+<meta property="article:tag" content="vue">
+<meta property="article:tag" content="组件化">
+<meta name="twitter:card" content="summary">
+    
+    
+        
+          
+              <link rel="shortcut icon" href="/images/favicon.ico">
+          
+        
+        
+          
+            <link rel="icon" type="image/png" href="/images/logo.png" sizes="192x192">
+          
+        
+        
+          
+            <link rel="apple-touch-icon" sizes="180x180" href="/images/logo.png">
+          
+        
+    
+    <!-- title -->
+    <title>组件化在项目中的实践</title>
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+      
+<link rel="stylesheet" href="/css/rtl.css">
+
+    
+    <!-- rss -->
+    
+    
+<meta name="generator" content="Hexo 5.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/archives/">Writing</a></li>
+         
+          <li><a href="/categories/">Category</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/search/">Search</a></li>
+        
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" href="/post/7a834e97/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" href="/post/bf1c5ae8/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://oxyzhg.cn/post/d00fbd96/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://oxyzhg.cn/post/d00fbd96/&text=组件化在项目中的实践"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://oxyzhg.cn/post/d00fbd96/&title=组件化在项目中的实践"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://oxyzhg.cn/post/d00fbd96/&is_video=false&description=组件化在项目中的实践"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=组件化在项目中的实践&body=Check out this article: https://oxyzhg.cn/post/d00fbd96/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://oxyzhg.cn/post/d00fbd96/&title=组件化在项目中的实践"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://oxyzhg.cn/post/d00fbd96/&title=组件化在项目中的实践"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://oxyzhg.cn/post/d00fbd96/&title=组件化在项目中的实践"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://oxyzhg.cn/post/d00fbd96/&title=组件化在项目中的实践"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://oxyzhg.cn/post/d00fbd96/&name=组件化在项目中的实践&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://oxyzhg.cn/post/d00fbd96/&t=组件化在项目中的实践"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%86%99%E5%9C%A8%E5%89%8D%E9%9D%A2"><span class="toc-number">1.</span> <span class="toc-text">写在前面</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E4%B8%AA%E7%AC%94%E8%AE%B0%E7%BB%84%E4%BB%B6%E7%9A%84%E6%A1%88%E4%BE%8B%E8%AE%BE%E8%AE%A1"><span class="toc-number">2.</span> <span class="toc-text">一个笔记组件的案例设计</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9C%80%E7%AE%80-API-%E8%AE%BE%E8%AE%A1"><span class="toc-number">2.1.</span> <span class="toc-text">最简 API 设计</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%BC%E5%AE%B9%E5%A4%9A%E7%A7%8D%E6%95%B0%E6%8D%AE%E8%8E%B7%E5%8F%96%E6%96%B9%E5%BC%8F"><span class="toc-number">2.2.</span> <span class="toc-text">兼容多种数据获取方式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%BC%E5%AE%B9%E4%B8%8D%E5%90%8C%E6%A8%A1%E5%BC%8F"><span class="toc-number">2.3.</span> <span class="toc-text">兼容不同模式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9B%B4%E5%A4%9A%E7%9A%84%E6%94%AF%E6%8C%81"><span class="toc-number">2.4.</span> <span class="toc-text">更多的支持</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E8%AE%BE%E8%AE%A1%E7%BB%84%E4%BB%B6"><span class="toc-number">3.</span> <span class="toc-text">如何设计组件</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E5%85%88%E8%AE%BE%E8%AE%A1%EF%BC%8C%E5%90%8E%E5%AE%9E%E7%8E%B0"><span class="toc-number">3.1.</span> <span class="toc-text">1. 先设计，后实现</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E7%BB%84%E4%BB%B6%E8%AE%BE%E8%AE%A1%E5%9B%9B%E8%A6%81%E7%B4%A0"><span class="toc-number">3.2.</span> <span class="toc-text">2. 组件设计四要素</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BB%88%E6%9E%81%E6%80%9D%E7%BB%B4%EF%BC%9A%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1"><span class="toc-number">4.</span> <span class="toc-text">终极思维：面向对象</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9C%80%E5%90%8E"><span class="toc-number">5.</span> <span class="toc-text">最后</span></a></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        组件化在项目中的实践
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">Oxyzhg</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2020-10-09T01:39:26.000Z" itemprop="datePublished">2020-10-09</time>
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fas fa-archive"></i>
+        <a class="category-link" href="/categories/vue/">vue</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link-link" href="/tags/vue/" rel="tag">vue</a>, <a class="tag-link-link" href="/tags/%E7%BB%84%E4%BB%B6%E5%8C%96/" rel="tag">组件化</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <h2 id="写在前面"><a href="#写在前面" class="headerlink" title="写在前面"></a>写在前面</h2><p>现今的 web 开发通过前后端分离的技术拆分为了 web 后端开发与 web 前端开发，值得指出的是，web 前端开发早已不是传统意义上的开发模式了，转而变成了 web 客户端开发，有过客户端开发经验的同学应该知道这两者间的差别，客户端开发关注的是：</p>
+<ol>
+<li>应用的生命周期</li>
+<li>组件化</li>
+<li>开发模式与打包方法</li>
+</ol>
+<p>组件化是客户端开发最重要的内容，设计一套复用度高、扩展性好的组件系统，可以<strong>显著提高开发效率</strong>，并且可以<strong>减少后期的维护成本</strong>。</p>
+<h2 id="一个笔记组件的案例设计"><a href="#一个笔记组件的案例设计" class="headerlink" title="一个笔记组件的案例设计"></a>一个笔记组件的案例设计</h2><p>就拿我们常用的有道云笔记或语雀等工具为参考，一步步来分析。</p>
+<h3 id="最简-API-设计"><a href="#最简-API-设计" class="headerlink" title="最简 API 设计"></a>最简 API 设计</h3><p>首先，应该为组件取一个恰当的名字，最好能够根据名字知道这个组件的存在意义。这里就叫 Note 吧。不管是在阅读状态还是在编辑状态，该组件都要展示笔记的内容，因为笔记对象应该通过组件的接口传入进来，因为我们为该组件设计第一个 api：</p>
+<table>
+<thead>
+<tr>
+<th>属性</th>
+<th>说明</th>
+<th>类型</th>
+<th>是否必填</th>
+<th>默认值</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>data</td>
+<td>笔记对象</td>
+<td>object</td>
+<td>是</td>
+<td>null</td>
+</tr>
+</tbody></table>
+<p>接下来，我们简单使用一下这个组件：</p>
+<figure class="highlight jsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> note = &#123;</span><br><span class="line"> title: <span class="string">&#x27;聊聊如何设计组件&#x27;</span>,</span><br><span class="line"> content: <span class="string">&#x27;&#x27;</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">&lt;Note data=&#123;note&#125; /&gt;</span><br></pre></td></tr></table></figure>
+<p>这样，一个最简 api 的笔记组件就搞定了，它的接口非常简单，只需要提供一个 data 属性，就可以展示出笔记内容，并且可以点击编辑进入书写状态。</p>
+<p>一般而言，如果没有更多的需求的话，我们的笔记组件设计到这里也就可以了。<strong>在设计组件时，务必遵循最小化原则，即尽可能少地抛出接口。</strong>因为使用组件的用户可能有很多，一旦组件作者不小心抛出了一个不合理的接口，以后想要修改就几乎不可能了（只能通过标记过时的方法提醒用户，但这种做法往往是无奈之举）。</p>
+<h3 id="兼容多种数据获取方式"><a href="#兼容多种数据获取方式" class="headerlink" title="兼容多种数据获取方式"></a>兼容多种数据获取方式</h3><p>现在，组件的使用者已经可以通过很简洁的 api 使用这个笔记组件了，但是现在问题来了：有的组件使用者只拿到了笔记的 id，想要通过直接传入 id 的方式使用组件。</p>
+<p>此时，作为组件作者，我们评估了这个需求是合理的，于是，我们扩展了笔记组件的 api：</p>
+<table>
+<thead>
+<tr>
+<th>属性</th>
+<th>说明</th>
+<th>类型</th>
+<th>是否必填</th>
+<th>默认值</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>data</td>
+<td>笔记对象</td>
+<td>object</td>
+<td>否</td>
+<td>null</td>
+</tr>
+<tr>
+<td>dataId</td>
+<td>笔记对象 ID</td>
+<td>object</td>
+<td>否</td>
+<td>null</td>
+</tr>
+</tbody></table>
+<p>现在可以通过传入 id 的方式来使用组件了：</p>
+<figure class="highlight jsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> noteId = <span class="string">&#x27;123&#x27;</span></span><br><span class="line">&lt;Note dataId=&#123;noteId&#125; /&gt;</span><br></pre></td></tr></table></figure>
+<p>这是组件设计的一个技巧，通过支持多种数据源使得调用更加简单。但是这种设计也有其弊端所在，如果这种兼容性的扩展过多会使得组件的内部逻辑变得复杂，也会使得 api 变得难于理解，因此，<strong>对于兼容性的 api 扩展要谨慎，不可过量</strong>。</p>
+<h3 id="兼容不同模式"><a href="#兼容不同模式" class="headerlink" title="兼容不同模式"></a>兼容不同模式</h3><p>组件的使用一如既往的优雅、简单，但是现在又有用户提出新的需求了：因为该组件是支持阅读与编辑两种模式的，在使用时，对于他人的笔记是不可编辑的，能否在指定的场景下只支持一种阅读模式？</p>
+<p>笔记组件由于内部支持了两种模式，既支持阅读，也支持编辑。因此调用者只想使用一种模式也是合理的。于是，我们继续扩展组件的 api：</p>
+<table>
+<thead>
+<tr>
+<th>属性</th>
+<th>说明</th>
+<th>类型</th>
+<th>是否必填</th>
+<th>默认值</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>mode</td>
+<td>模式，数组的第一项作为初始模式，该参数不可为空数组</td>
+<td>array</td>
+<td>否</td>
+<td><code>[&#39;write&#39;, &#39;read&#39;]</code></td>
+</tr>
+</tbody></table>
+<p>现在，对于只想使用阅读模式的用户，可以这么调用：</p>
+<figure class="highlight jsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> note = &#123;&#125;</span><br><span class="line"><span class="keyword">const</span> mode = [<span class="string">&#x27;read&#x27;</span>]</span><br><span class="line">&lt;Note data=&#123;note&#125; mode=&#123;mode&#125; /&gt;</span><br></pre></td></tr></table></figure>
+<p>在设计 api 时，我们在满足需求的前提下，支持了更多情况。首先，使用者也可能只使用编辑模式，因为 mode 参数是支持随意组合各种模式的，因此这种情况也能满足。另外，如果组件以后扩展了更多模式，该 api 仍然能满足需求，只需要为 mode 数组增加更多的模式项即可。这里有一个更佳的设计是，当使用多个模式时，确定哪个模式作为初始模式也是有必要的，因此，将 mode 数组的第一项作为多模式下的初始模式，既满足了需求，又达到了 api 设计最小化的原则。</p>
+<p>现在，我们对用户的需求进行了扩展，不仅支持只使用阅读模式，还支持各种模式任意组合和初始模式，但是这还不够，组件的设计者应当针对需求想到更长远的情况，针对这个例子，我们还可以为组件扩展一个模式改变的事件，让调用者可以捕捉到笔记组件从阅读 -&gt; 编辑或编辑 -&gt; 阅读（随着模式的扩展，这种组合会更多）切换的时机：</p>
+<table>
+<thead>
+<tr>
+<th>事件</th>
+<th>说明</th>
+<th>回调参数</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>modeChange</td>
+<td>模式切换时触发</td>
+<td>(from: string, to: string) from 表示切换前的模式，to 表示切换后的模式</td>
+</tr>
+</tbody></table>
+<p>调用者可能在捕捉到模式切换事件时，做一些特定的工作：</p>
+<figure class="highlight jsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> handleModeChange = <span class="function">(<span class="params"><span class="keyword">from</span>, to</span>) =&gt;</span> &#123;&#125;;</span><br><span class="line">&lt;Note onModeChange=&#123;handleModeChange&#125; /&gt;;</span><br></pre></td></tr></table></figure>
+<h3 id="更多的支持"><a href="#更多的支持" class="headerlink" title="更多的支持"></a>更多的支持</h3><p>除了扩展组件的能力外，我们还可以扩展组件的视图。比如笔记的工具栏，我们可以通过 api 拓展而渲染出来，这就是组件的<strong>子视图设计</strong>，在 web 前端的组件化中，称为<strong>插槽</strong>。我们可以为笔记组件扩展一个工具栏的插槽：</p>
+<table>
+<thead>
+<tr>
+<th>插槽</th>
+<th>说明</th>
+<th>参数</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>toolbar</td>
+<td>工具栏子视图</td>
+<td>{ data }</td>
+</tr>
+</tbody></table>
+<h2 id="如何设计组件"><a href="#如何设计组件" class="headerlink" title="如何设计组件"></a>如何设计组件</h2><p>上述案例讲述了组件设计的整个流程，通过分析用户的需求（或未来可能出现的需求），一步一步地设计出了一个复用度高、扩展性好的组件。如果你是一个组件设计的新手，你应该如何去思考、去设计一个优良的组件呢？</p>
+<h3 id="1-先设计，后实现"><a href="#1-先设计，后实现" class="headerlink" title="1. 先设计，后实现"></a>1. 先设计，后实现</h3><p>我们通篇在讨论组件的设计，但是实际操作时，很多朋友会通过边实现边设计的方式来完成一个组件的制作，这是不合理的，因为自身能力与眼界的限制，实现可能会干扰你的设计，对于以下两个经典矛盾，希望读者能选择后者，以追求合理性为重。</p>
+<ol>
+<li>这样实现比较方便，不如将这个参数抛出让用户传进来吧！</li>
+<li>这样设计比较合理，虽然实现难度可能会比较高，但我可以通过文档学习、求问他人的方式来实现它，或者直接让他人来实现。</li>
+</ol>
+<p><strong>提出问题比解决问题更难。</strong>设计难于实现，你应当花 70%的时间来设计而不是用来实现。有的设计者甚至不参与实现，设计者与实现者的身份也是随时在转换的，善于思考的实现者本身就是设计者。</p>
+<h3 id="2-组件设计四要素"><a href="#2-组件设计四要素" class="headerlink" title="2. 组件设计四要素"></a>2. 组件设计四要素</h3><ol>
+<li>属性</li>
+<li>方法</li>
+<li>事件</li>
+<li>子视图</li>
+</ol>
+<p>上述的案例基本涵盖了这四个要素，这四要素共同组成了组件的 API。需要注意的，除了基本的四要素外，我们还需要注意这些也是组件 API 的一部分：</p>
+<ul>
+<li>属性的类型、是否必填、默认值（属性类型确定后不再变化）</li>
+<li>方法的参数、返回值（需要考虑变化的情况）</li>
+<li>事件回调函数的参数</li>
+<li>插槽可获取到的局部参数</li>
+</ul>
+<p>在设计时，应当小心谨慎面对每一个 api 的要素，哪一个环节出现了设计缺陷，对于调用者都是如鲠在喉。</p>
+<h2 id="终极思维：面向对象"><a href="#终极思维：面向对象" class="headerlink" title="终极思维：面向对象"></a>终极思维：面向对象</h2><p>尽管我们通过一系列的理论讲述了组件设计的方法，但是对于初学者而言，仍然难以设计出一个优良的组件，设计一个优良的组件需要大量的经验，初学者往往考虑不全面，或因对需求的不了解，无法预知未来的变化。</p>
+<p>尽管如此，初学者仍然要耐心学习组件的设计，不积跬步无以至千里，经过一段时间的积累，我总结了一个设计组件的终极思维，将面向对象的思想用于组件设计，将会事半功倍。</p>
+<p>在开发领域，学会思考比埋头干活重要。我们将这个理论用于组件设计中，如何通过面向对象的思维来设计一个组件呢？</p>
+<p>虽然我们强调使用面向对象的思维来设计组件，但仿佛面向对象思维比组件设计更高深，我们当然不会推荐大家用更加晦涩的理论来指导组件的设计，这里，我们将面向对象拟人化，提取出一个自然世界联想法的思维方法。</p>
+<p>下面我们就用这种方法，来设计一个快递小哥的组件：</p>
+<ul>
+<li>首先，快递小哥有他的基本信息，这是该组件的<strong>属性</strong>，基本信息中包含了他的任职单位、工作年限、姓名、联系方式等等。</li>
+<li>此外，快递小哥有一些特有的行为，例如送快递、接收包裹等，我们可以将这部分抽取为组件的<strong>方法</strong>，比如我们调用快递小哥的接收包裹方法，该方法有两个参数，第一个参数是我要寄的东西即包裹，第二个参数是快递单，描述了寄送相关的信息。</li>
+<li>除了基本信息和一些行为外，快递小哥组件还有一些特有的<strong>事件</strong>，当我们的包裹到了时，他会打电话给我们，这里，组件抛出了一个快递到达的事件，事件的参数是快递单和包裹，快递单描述了包裹的送达信息，包裹是快递单中描述的接收人的东西。</li>
+<li>最后，快递小哥组件有没有<strong>子视图</strong>呢？有。快递小哥组件除了被我们普通用户调用外，还会被快递公司所调用，不同的快递公司会以不同的方式来包装快递小哥（例如通过不同服装不同 logo 的方式），因此，快递公司在调用该组件时，会将快递小哥的服装传入一个名为装束的子视图中，这样，不同公司的快递小哥就有不同的装束了。</li>
+</ul>
+<h2 id="最后"><a href="#最后" class="headerlink" title="最后"></a>最后</h2><p>重新回到开篇的问题，为什么说当今的 web 前端开发已变成 web 客户端开发呢？因为组件化是所有客户端开发的核心概念，只要这个端大部分的时间在做组件抽象的工作，我们就可以认为自己在从事客户端开发。<br>最后，组件化不是银弹，不能为你解决任何实际问题，它只是一种思维方式。</p>
+<hr>
+<p>相关资料：</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://juejin.im/post/6878099828497186823">如何制作一个组件？论组件化思想</a></li>
+</ul>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/archives/">Writing</a></li>
+         
+          <li><a href="/categories/">Category</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/search/">Search</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%86%99%E5%9C%A8%E5%89%8D%E9%9D%A2"><span class="toc-number">1.</span> <span class="toc-text">写在前面</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E4%B8%AA%E7%AC%94%E8%AE%B0%E7%BB%84%E4%BB%B6%E7%9A%84%E6%A1%88%E4%BE%8B%E8%AE%BE%E8%AE%A1"><span class="toc-number">2.</span> <span class="toc-text">一个笔记组件的案例设计</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9C%80%E7%AE%80-API-%E8%AE%BE%E8%AE%A1"><span class="toc-number">2.1.</span> <span class="toc-text">最简 API 设计</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%BC%E5%AE%B9%E5%A4%9A%E7%A7%8D%E6%95%B0%E6%8D%AE%E8%8E%B7%E5%8F%96%E6%96%B9%E5%BC%8F"><span class="toc-number">2.2.</span> <span class="toc-text">兼容多种数据获取方式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%BC%E5%AE%B9%E4%B8%8D%E5%90%8C%E6%A8%A1%E5%BC%8F"><span class="toc-number">2.3.</span> <span class="toc-text">兼容不同模式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9B%B4%E5%A4%9A%E7%9A%84%E6%94%AF%E6%8C%81"><span class="toc-number">2.4.</span> <span class="toc-text">更多的支持</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E8%AE%BE%E8%AE%A1%E7%BB%84%E4%BB%B6"><span class="toc-number">3.</span> <span class="toc-text">如何设计组件</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E5%85%88%E8%AE%BE%E8%AE%A1%EF%BC%8C%E5%90%8E%E5%AE%9E%E7%8E%B0"><span class="toc-number">3.1.</span> <span class="toc-text">1. 先设计，后实现</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E7%BB%84%E4%BB%B6%E8%AE%BE%E8%AE%A1%E5%9B%9B%E8%A6%81%E7%B4%A0"><span class="toc-number">3.2.</span> <span class="toc-text">2. 组件设计四要素</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BB%88%E6%9E%81%E6%80%9D%E7%BB%B4%EF%BC%9A%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1"><span class="toc-number">4.</span> <span class="toc-text">终极思维：面向对象</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9C%80%E5%90%8E"><span class="toc-number">5.</span> <span class="toc-text">最后</span></a></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://oxyzhg.cn/post/d00fbd96/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://oxyzhg.cn/post/d00fbd96/&text=组件化在项目中的实践"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://oxyzhg.cn/post/d00fbd96/&title=组件化在项目中的实践"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://oxyzhg.cn/post/d00fbd96/&is_video=false&description=组件化在项目中的实践"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=组件化在项目中的实践&body=Check out this article: https://oxyzhg.cn/post/d00fbd96/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://oxyzhg.cn/post/d00fbd96/&title=组件化在项目中的实践"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://oxyzhg.cn/post/d00fbd96/&title=组件化在项目中的实践"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://oxyzhg.cn/post/d00fbd96/&title=组件化在项目中的实践"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://oxyzhg.cn/post/d00fbd96/&title=组件化在项目中的实践"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://oxyzhg.cn/post/d00fbd96/&name=组件化在项目中的实践&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://oxyzhg.cn/post/d00fbd96/&t=组件化在项目中的实践"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy; 2021 Oxyzhg
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/archives/">Writing</a></li>
+         
+          <li><a href="/categories/">Category</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/search/">Search</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+
+<link rel="stylesheet" href="/lib/justified-gallery/css/justifiedGallery.min.css">
+
+
+    <!-- jquery -->
+
+<script src="/lib/jquery/jquery.min.js"></script>
+
+
+<script src="/lib/justified-gallery/js/jquery.justifiedGallery.min.js"></script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+<!-- Disqus Comments -->
+
+
+</body>
+</html>
