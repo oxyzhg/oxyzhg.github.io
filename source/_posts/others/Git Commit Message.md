@@ -1,6 +1,7 @@
 ---
 title: 提交高质量的 Git Commit Message
 author: Oxyzhg
+categories: 其他
 tags: git-commit
 abbrlink: eaa638cc
 date: 2021-01-15 16:58:08
