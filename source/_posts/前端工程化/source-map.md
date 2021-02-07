@@ -1,5 +1,5 @@
 ---
-title: Source Map 使用分析报告
+title: Source Map 配置分析
 author: Oxyzhg
 categories: 前端工程化
 tags:
@@ -31,7 +31,7 @@ date: 2021-02-05 18:59:47
 - eval, inline 都可以看作是 source map 的修饰符，并且这两者是并列关系，不会同时出现。
 - eval, inline 都会将 source map 内容以注释的形式添加到 bundle 中，这会增加 bundle 文件体积，不适用生产环境。
 
-## source map quality
+## 代码质量说明
 
 - **bundled**: 所有生成的代码视作一大块代码。没有相互分离的模块。
 - **generated**: 每个模块相互分离，并用模块名称进行注释。可以看到 webpack 生成的代码。示例：你会看到类似 `var module__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(42); module__WEBPACK_IMPORTED_MODULE_1__.a();`，而不是 `import {test} from "module"; test();`。
@@ -39,33 +39,36 @@ date: 2021-02-05 18:59:47
 - **original lines**: 每个模块相互分离，并用模块名称进行注释。可以看到转译前的代码。
 - **original**: source map 不包含源码内容。浏览器通常会去服务中加载源代码。
 
-常见配置分析：
+## 常见配置分析
 
-| devtool                        | quality        | performance |
-| ------------------------------ | -------------- | ----------- |
-| eval                           | generated      |             |
-| eval-source-map                | original       |             |
-| eval-cheap-source-map          | transformed    |             |
-| eval-cheap-module-source-map   | original lines |             |
-| inline-source-map              | original       |             |
-| cheap-source-map               | transformed    |             |
-| inline-cheap-source-map        | transformed    |             |
-| cheap-module-source-map        | original lines |             |
-| inline-cheap-module-source-map | original lines |             |
-| source-map                     | original       |             |
-| hidden-source-map              | original       |             |
-| nosources-source-map           | original       |             |
+| devtool                        | quality        | build   | rebuild |
+| ------------------------------ | -------------- | ------- | ------- |
+| eval                           | generated      | fast    | fastest |
+| eval-source-map                | original       | slowest | ok      |
+| eval-cheap-source-map          | transformed    | ok      | fast    |
+| eval-cheap-module-source-map   | original lines | slow    | fast    |
+| inline-source-map              | original       | slowest | slowest |
+| cheap-source-map               | transformed    | ok      | slow    |
+| inline-cheap-source-map        | transformed    | ok      | slow    |
+| cheap-module-source-map        | original lines | slow    | slow    |
+| inline-cheap-module-source-map | original lines | slow    | slow    |
+| source-map                     | original       | slowest | slowest |
+| hidden-source-map              | original       | slowest | slowest |
+| nosources-source-map           | original       | slowest | slowest |
 
-总结：
+分析与总结：
 
-1. eval,inline,hidden,nosources 都是不影响 source map 质量的修饰符。
+1. eval,inline,hidden,nosources 都是不影响 source map 质量的修饰符，它们决定了 source map 以什么形式出现在什么地方。
 2. 形如 \*-module-source-map 类型，source map 质量都是 original lines.
 3. 形如 \*-cheap-source-map 类型，会影响 source map 质量，最终看到的都是转换后的代码。
 4. 影响 source map 质量的修饰符优先级顺序是：module>cheap>eval=inline=hidden=nosources
 5. source map 代码质量顺序是：original>original lines>transformed>generated
-6. 形如 eval-\* 类型，再次构建速度较快
+6. inline,hidden,nosources 都不影响 build/rebuild 速度。
+7. 初次构建速度跟代码质量有关系，代码越精简生成速度越快，生成速度顺序是：generated>transform>original lines>original
+8. 对于再次构建来说，形如 eval-\* 类型，不会生成 source map 文件，再次构建速度较快，cheap 修饰符也会大幅加快再次构建速度。module 修饰符（webpack5）对再次构建速度的影响可忽略不计。总的来说，是否生成 source map 文件起决定性作用，cheap 等影响代码质量的修饰符因素次之。
+9. 虽然表中 eval 类型在 build/rebuild 两方面表现都非常突出，但由于开发环境我们需要尽可能的映射到源代码，因此尽量在 eval 的基础上选择其他更适合的类型。
 
-## 根据应用场景分析
+## 具体应用场景分析
 
 ### 对于开发环境
 
