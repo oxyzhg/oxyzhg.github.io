@@ -8,13 +8,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
     <meta name="description" content="使用场景对于开发环境，通常希望更快速的 source map，需要添加到 bundle 文件以增加体积为代价；对于生产环境，通常希望更精确的 source map，需要从 bundle 中分离并独立存在，并且尽量保证 rebuild 速度。 关键字及作用书写格式 [inline-|hidden-|eval-][nosources-][cheap-[module-]]source-map 关键字说明">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Source Map 使用分析报告">
+<meta property="og:title" content="Source Map 配置分析">
 <meta property="og:url" content="https://oxyzhg.cn/post/36fc7ed/index.html">
 <meta property="og:site_name" content="Oxyzhg">
 <meta property="og:description" content="使用场景对于开发环境，通常希望更快速的 source map，需要添加到 bundle 文件以增加体积为代价；对于生产环境，通常希望更精确的 source map，需要从 bundle 中分离并独立存在，并且尽量保证 rebuild 速度。 关键字及作用书写格式 [inline-|hidden-|eval-][nosources-][cheap-[module-]]source-map 关键字说明">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2021-02-05T10:59:47.000Z">
-<meta property="article:modified_time" content="2021-02-05T11:09:32.858Z">
+<meta property="article:modified_time" content="2021-02-07T06:59:44.518Z">
 <meta property="article:author" content="Oxyzhg">
 <meta property="article:tag" content="webpack">
 <meta property="article:tag" content="source-map">
@@ -38,7 +38,7 @@
         
     
     <!-- title -->
-    <title>Source Map 使用分析报告</title>
+    <title>Source Map 配置分析</title>
     <!-- styles -->
     
 <link rel="stylesheet" href="/css/style.css">
@@ -95,21 +95,21 @@
     <div id="share" style="display: none">
       <ul>
   <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://oxyzhg.cn/post/36fc7ed/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://oxyzhg.cn/post/36fc7ed/&text=Source Map 使用分析报告"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://oxyzhg.cn/post/36fc7ed/&title=Source Map 使用分析报告"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://oxyzhg.cn/post/36fc7ed/&is_video=false&description=Source Map 使用分析报告"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="mailto:?subject=Source Map 使用分析报告&body=Check out this article: https://oxyzhg.cn/post/36fc7ed/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://oxyzhg.cn/post/36fc7ed/&title=Source Map 使用分析报告"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://oxyzhg.cn/post/36fc7ed/&title=Source Map 使用分析报告"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://oxyzhg.cn/post/36fc7ed/&title=Source Map 使用分析报告"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://oxyzhg.cn/post/36fc7ed/&title=Source Map 使用分析报告"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://oxyzhg.cn/post/36fc7ed/&name=Source Map 使用分析报告&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://oxyzhg.cn/post/36fc7ed/&t=Source Map 使用分析报告"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://oxyzhg.cn/post/36fc7ed/&text=Source Map 配置分析"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://oxyzhg.cn/post/36fc7ed/&title=Source Map 配置分析"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://oxyzhg.cn/post/36fc7ed/&is_video=false&description=Source Map 配置分析"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=Source Map 配置分析&body=Check out this article: https://oxyzhg.cn/post/36fc7ed/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://oxyzhg.cn/post/36fc7ed/&title=Source Map 配置分析"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://oxyzhg.cn/post/36fc7ed/&title=Source Map 配置分析"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://oxyzhg.cn/post/36fc7ed/&title=Source Map 配置分析"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://oxyzhg.cn/post/36fc7ed/&title=Source Map 配置分析"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://oxyzhg.cn/post/36fc7ed/&name=Source Map 配置分析&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://oxyzhg.cn/post/36fc7ed/&t=Source Map 配置分析"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
 </ul>
 
     </div>
     <div id="toc">
-      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8%E5%9C%BA%E6%99%AF"><span class="toc-number">1.</span> <span class="toc-text">使用场景</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%B3%E9%94%AE%E5%AD%97%E5%8F%8A%E4%BD%9C%E7%94%A8"><span class="toc-number">2.</span> <span class="toc-text">关键字及作用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#source-map-quality"><span class="toc-number">3.</span> <span class="toc-text">source map quality</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%A0%B9%E6%8D%AE%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF%E5%88%86%E6%9E%90"><span class="toc-number">4.</span> <span class="toc-text">根据应用场景分析</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AF%B9%E4%BA%8E%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83"><span class="toc-number">4.1.</span> <span class="toc-text">对于开发环境</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%89%B9%E5%AE%9A%E5%9C%BA%E6%99%AF"><span class="toc-number">4.2.</span> <span class="toc-text">特定场景</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AF%B9%E4%BA%8E%E7%94%9F%E4%BA%A7%E7%8E%AF%E5%A2%83"><span class="toc-number">4.3.</span> <span class="toc-text">对于生产环境</span></a></li></ol></li></ol>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8%E5%9C%BA%E6%99%AF"><span class="toc-number">1.</span> <span class="toc-text">使用场景</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%B3%E9%94%AE%E5%AD%97%E5%8F%8A%E4%BD%9C%E7%94%A8"><span class="toc-number">2.</span> <span class="toc-text">关键字及作用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%A3%E7%A0%81%E8%B4%A8%E9%87%8F%E8%AF%B4%E6%98%8E"><span class="toc-number">3.</span> <span class="toc-text">代码质量说明</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B8%B8%E8%A7%81%E9%85%8D%E7%BD%AE%E5%88%86%E6%9E%90"><span class="toc-number">4.</span> <span class="toc-text">常见配置分析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%B7%E4%BD%93%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF%E5%88%86%E6%9E%90"><span class="toc-number">5.</span> <span class="toc-text">具体应用场景分析</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AF%B9%E4%BA%8E%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83"><span class="toc-number">5.1.</span> <span class="toc-text">对于开发环境</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%89%B9%E5%AE%9A%E5%9C%BA%E6%99%AF"><span class="toc-number">5.2.</span> <span class="toc-text">特定场景</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AF%B9%E4%BA%8E%E7%94%9F%E4%BA%A7%E7%8E%AF%E5%A2%83"><span class="toc-number">5.3.</span> <span class="toc-text">对于生产环境</span></a></li></ol></li></ol>
     </div>
   </span>
 </div>
@@ -121,7 +121,7 @@
   <header>
     
     <h1 class="posttitle" itemprop="name headline">
-        Source Map 使用分析报告
+        Source Map 配置分析
     </h1>
 
 
@@ -174,93 +174,108 @@
 <li>eval, inline 都可以看作是 source map 的修饰符，并且这两者是并列关系，不会同时出现。</li>
 <li>eval, inline 都会将 source map 内容以注释的形式添加到 bundle 中，这会增加 bundle 文件体积，不适用生产环境。</li>
 </ul>
-<h2 id="source-map-quality"><a href="#source-map-quality" class="headerlink" title="source map quality"></a>source map quality</h2><ul>
+<h2 id="代码质量说明"><a href="#代码质量说明" class="headerlink" title="代码质量说明"></a>代码质量说明</h2><ul>
 <li><strong>bundled</strong>: 所有生成的代码视作一大块代码。没有相互分离的模块。</li>
 <li><strong>generated</strong>: 每个模块相互分离，并用模块名称进行注释。可以看到 webpack 生成的代码。示例：你会看到类似 <code>var module__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(42); module__WEBPACK_IMPORTED_MODULE_1__.a();</code>，而不是 <code>import &#123;test&#125; from &quot;module&quot;; test();</code>。</li>
 <li><strong>transformed</strong>: 每个模块相互分离，并用模块名称进行注释。可以看到 loader 转译后、webpack 转换前的代码。示例：你会看到类似 <code>import &#123;test&#125; from &quot;module&quot;; var A = function(_test) &#123; ... &#125;(test);</code>，而不是 <code>import &#123;test&#125; from &quot;module&quot;; class A extends test &#123;&#125;</code>。</li>
 <li><strong>original lines</strong>: 每个模块相互分离，并用模块名称进行注释。可以看到转译前的代码。</li>
 <li><strong>original</strong>: source map 不包含源码内容。浏览器通常会去服务中加载源代码。</li>
 </ul>
-<p>常见配置分析：</p>
-<table>
+<h2 id="常见配置分析"><a href="#常见配置分析" class="headerlink" title="常见配置分析"></a>常见配置分析</h2><table>
 <thead>
 <tr>
 <th>devtool</th>
 <th>quality</th>
-<th>performance</th>
+<th>build</th>
+<th>rebuild</th>
 </tr>
 </thead>
 <tbody><tr>
 <td>eval</td>
 <td>generated</td>
-<td></td>
+<td>fast</td>
+<td>fastest</td>
 </tr>
 <tr>
 <td>eval-source-map</td>
 <td>original</td>
-<td></td>
+<td>slowest</td>
+<td>ok</td>
 </tr>
 <tr>
 <td>eval-cheap-source-map</td>
 <td>transformed</td>
-<td></td>
+<td>ok</td>
+<td>fast</td>
 </tr>
 <tr>
 <td>eval-cheap-module-source-map</td>
 <td>original lines</td>
-<td></td>
+<td>slow</td>
+<td>fast</td>
 </tr>
 <tr>
 <td>inline-source-map</td>
 <td>original</td>
-<td></td>
+<td>slowest</td>
+<td>slowest</td>
 </tr>
 <tr>
 <td>cheap-source-map</td>
 <td>transformed</td>
-<td></td>
+<td>ok</td>
+<td>slow</td>
 </tr>
 <tr>
 <td>inline-cheap-source-map</td>
 <td>transformed</td>
-<td></td>
+<td>ok</td>
+<td>slow</td>
 </tr>
 <tr>
 <td>cheap-module-source-map</td>
 <td>original lines</td>
-<td></td>
+<td>slow</td>
+<td>slow</td>
 </tr>
 <tr>
 <td>inline-cheap-module-source-map</td>
 <td>original lines</td>
-<td></td>
+<td>slow</td>
+<td>slow</td>
 </tr>
 <tr>
 <td>source-map</td>
 <td>original</td>
-<td></td>
+<td>slowest</td>
+<td>slowest</td>
 </tr>
 <tr>
 <td>hidden-source-map</td>
 <td>original</td>
-<td></td>
+<td>slowest</td>
+<td>slowest</td>
 </tr>
 <tr>
 <td>nosources-source-map</td>
 <td>original</td>
-<td></td>
+<td>slowest</td>
+<td>slowest</td>
 </tr>
 </tbody></table>
-<p>总结：</p>
+<p>分析与总结：</p>
 <ol>
-<li>eval,inline,hidden,nosources 都是不影响 source map 质量的修饰符。</li>
+<li>eval,inline,hidden,nosources 都是不影响 source map 质量的修饰符，它们决定了 source map 以什么形式出现在什么地方。</li>
 <li>形如 *-module-source-map 类型，source map 质量都是 original lines.</li>
 <li>形如 *-cheap-source-map 类型，会影响 source map 质量，最终看到的都是转换后的代码。</li>
 <li>影响 source map 质量的修饰符优先级顺序是：module&gt;cheap&gt;eval=inline=hidden=nosources</li>
 <li>source map 代码质量顺序是：original&gt;original lines&gt;transformed&gt;generated</li>
-<li>形如 eval-* 类型，再次构建速度较快</li>
+<li>inline,hidden,nosources 都不影响 build/rebuild 速度。</li>
+<li>初次构建速度跟代码质量有关系，代码越精简生成速度越快，生成速度顺序是：generated&gt;transform&gt;original lines&gt;original</li>
+<li>对于再次构建来说，形如 eval-* 类型，不会生成 source map 文件，再次构建速度较快，cheap 修饰符也会大幅加快再次构建速度。module 修饰符（webpack5）对再次构建速度的影响可忽略不计。总的来说，是否生成 source map 文件起决定性作用，cheap 等影响代码质量的修饰符因素次之。</li>
+<li>虽然表中 eval 类型在 build/rebuild 两方面表现都非常突出，但由于开发环境我们需要尽可能的映射到源代码，因此尽量在 eval 的基础上选择其他更适合的类型。</li>
 </ol>
-<h2 id="根据应用场景分析"><a href="#根据应用场景分析" class="headerlink" title="根据应用场景分析"></a>根据应用场景分析</h2><h3 id="对于开发环境"><a href="#对于开发环境" class="headerlink" title="对于开发环境"></a>对于开发环境</h3><p><strong>eval</strong></p>
+<h2 id="具体应用场景分析"><a href="#具体应用场景分析" class="headerlink" title="具体应用场景分析"></a>具体应用场景分析</h2><h3 id="对于开发环境"><a href="#对于开发环境" class="headerlink" title="对于开发环境"></a>对于开发环境</h3><p><strong>eval</strong></p>
 <p>每个模块都使用 eval 执行，并且都有 <code>//# sourceURL</code>。该项构建很快，但缺点也很明显，由于会映射到转换后的代码，而不是映射到原始代码（没有从 loader 中获取 source map），所以不能正确的显示行数。<em>这种类型一般不使用，映射不准确还不如不用。</em></p>
 <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(<span class="function">()=&gt;</span>&#123;<span class="built_in">eval</span>(<span class="string">&quot;console.log(1122);document.body.innerHTML=&#x27;&lt;h1&gt;Hello world!&lt;/h1&gt;&#x27;;\n\n//# sourceURL=webpack://@dotlim/scripts/./example/src/index.js?&quot;</span>)&#125;)();</span><br></pre></td></tr></table></figure>
 <p>映射形式 <code>index.js:1</code></p>
@@ -339,22 +354,22 @@
     </div>
 
     <div id="toc-footer" style="display: none">
-      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8%E5%9C%BA%E6%99%AF"><span class="toc-number">1.</span> <span class="toc-text">使用场景</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%B3%E9%94%AE%E5%AD%97%E5%8F%8A%E4%BD%9C%E7%94%A8"><span class="toc-number">2.</span> <span class="toc-text">关键字及作用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#source-map-quality"><span class="toc-number">3.</span> <span class="toc-text">source map quality</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%A0%B9%E6%8D%AE%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF%E5%88%86%E6%9E%90"><span class="toc-number">4.</span> <span class="toc-text">根据应用场景分析</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AF%B9%E4%BA%8E%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83"><span class="toc-number">4.1.</span> <span class="toc-text">对于开发环境</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%89%B9%E5%AE%9A%E5%9C%BA%E6%99%AF"><span class="toc-number">4.2.</span> <span class="toc-text">特定场景</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AF%B9%E4%BA%8E%E7%94%9F%E4%BA%A7%E7%8E%AF%E5%A2%83"><span class="toc-number">4.3.</span> <span class="toc-text">对于生产环境</span></a></li></ol></li></ol>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8%E5%9C%BA%E6%99%AF"><span class="toc-number">1.</span> <span class="toc-text">使用场景</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%B3%E9%94%AE%E5%AD%97%E5%8F%8A%E4%BD%9C%E7%94%A8"><span class="toc-number">2.</span> <span class="toc-text">关键字及作用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%A3%E7%A0%81%E8%B4%A8%E9%87%8F%E8%AF%B4%E6%98%8E"><span class="toc-number">3.</span> <span class="toc-text">代码质量说明</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B8%B8%E8%A7%81%E9%85%8D%E7%BD%AE%E5%88%86%E6%9E%90"><span class="toc-number">4.</span> <span class="toc-text">常见配置分析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%B7%E4%BD%93%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF%E5%88%86%E6%9E%90"><span class="toc-number">5.</span> <span class="toc-text">具体应用场景分析</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AF%B9%E4%BA%8E%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83"><span class="toc-number">5.1.</span> <span class="toc-text">对于开发环境</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%89%B9%E5%AE%9A%E5%9C%BA%E6%99%AF"><span class="toc-number">5.2.</span> <span class="toc-text">特定场景</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AF%B9%E4%BA%8E%E7%94%9F%E4%BA%A7%E7%8E%AF%E5%A2%83"><span class="toc-number">5.3.</span> <span class="toc-text">对于生产环境</span></a></li></ol></li></ol>
     </div>
 
     <div id="share-footer" style="display: none">
       <ul>
   <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://oxyzhg.cn/post/36fc7ed/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://oxyzhg.cn/post/36fc7ed/&text=Source Map 使用分析报告"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://oxyzhg.cn/post/36fc7ed/&title=Source Map 使用分析报告"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://oxyzhg.cn/post/36fc7ed/&is_video=false&description=Source Map 使用分析报告"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="mailto:?subject=Source Map 使用分析报告&body=Check out this article: https://oxyzhg.cn/post/36fc7ed/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://oxyzhg.cn/post/36fc7ed/&title=Source Map 使用分析报告"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://oxyzhg.cn/post/36fc7ed/&title=Source Map 使用分析报告"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://oxyzhg.cn/post/36fc7ed/&title=Source Map 使用分析报告"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://oxyzhg.cn/post/36fc7ed/&title=Source Map 使用分析报告"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://oxyzhg.cn/post/36fc7ed/&name=Source Map 使用分析报告&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://oxyzhg.cn/post/36fc7ed/&t=Source Map 使用分析报告"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://oxyzhg.cn/post/36fc7ed/&text=Source Map 配置分析"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://oxyzhg.cn/post/36fc7ed/&title=Source Map 配置分析"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://oxyzhg.cn/post/36fc7ed/&is_video=false&description=Source Map 配置分析"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=Source Map 配置分析&body=Check out this article: https://oxyzhg.cn/post/36fc7ed/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://oxyzhg.cn/post/36fc7ed/&title=Source Map 配置分析"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://oxyzhg.cn/post/36fc7ed/&title=Source Map 配置分析"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://oxyzhg.cn/post/36fc7ed/&title=Source Map 配置分析"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://oxyzhg.cn/post/36fc7ed/&title=Source Map 配置分析"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://oxyzhg.cn/post/36fc7ed/&name=Source Map 配置分析&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://oxyzhg.cn/post/36fc7ed/&t=Source Map 配置分析"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
 </ul>
 
     </div>
