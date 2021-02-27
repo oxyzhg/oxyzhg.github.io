@@ -14,7 +14,7 @@
 <meta property="og:description" content="使用场景对于开发环境，通常希望更快速的 source map，需要添加到 bundle 文件以增加体积为代价；对于生产环境，通常希望更精确的 source map，需要从 bundle 中分离并独立存在，并且尽量保证 rebuild 速度。 关键字及作用书写格式 [inline-|hidden-|eval-][nosources-][cheap-[module-]]source-map 关键字说明">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2021-02-05T10:59:47.000Z">
-<meta property="article:modified_time" content="2021-02-07T06:59:44.518Z">
+<meta property="article:modified_time" content="2021-02-27T08:57:19.772Z">
 <meta property="article:author" content="Oxyzhg">
 <meta property="article:tag" content="webpack">
 <meta property="article:tag" content="source-map">
@@ -52,7 +52,7 @@
     <!-- rss -->
     
     
-<meta name="generator" content="Hexo 5.3.0"></head>
+<meta name="generator" content="Hexo 5.4.0"></head>
 
 <body class="max-width mx-auto px3 ltr">
     
@@ -278,54 +278,71 @@
 <h2 id="具体应用场景分析"><a href="#具体应用场景分析" class="headerlink" title="具体应用场景分析"></a>具体应用场景分析</h2><h3 id="对于开发环境"><a href="#对于开发环境" class="headerlink" title="对于开发环境"></a>对于开发环境</h3><p><strong>eval</strong></p>
 <p>每个模块都使用 eval 执行，并且都有 <code>//# sourceURL</code>。该项构建很快，但缺点也很明显，由于会映射到转换后的代码，而不是映射到原始代码（没有从 loader 中获取 source map），所以不能正确的显示行数。<em>这种类型一般不使用，映射不准确还不如不用。</em></p>
 <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(<span class="function">()=&gt;</span>&#123;<span class="built_in">eval</span>(<span class="string">&quot;console.log(1122);document.body.innerHTML=&#x27;&lt;h1&gt;Hello world!&lt;/h1&gt;&#x27;;\n\n//# sourceURL=webpack://@dotlim/scripts/./example/src/index.js?&quot;</span>)&#125;)();</span><br></pre></td></tr></table></figure>
+
 <p>映射形式 <code>index.js:1</code></p>
 <p><strong>eval-source-map</strong></p>
 <p>每个模块使用 eval 执行，并且 source map 转换为 DataURL 添加到 eval 中。初始化 source map 时较慢，但是会在重新构建时提供较快的速度，并且生成实际的文件。行数能够正确映射，因为会映射到原始代码中。</p>
 <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(<span class="function">()=&gt;</span>&#123;<span class="built_in">eval</span>(<span class="string">&quot;console.log(1122);document.body.innerHTML=&#x27;&lt;h1&gt;Hello world!&lt;/h1&gt;&#x27;;//# sourceURL=[module]\n//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIndlYnBhY2s6Ly9AZG90bGltL3NjcmlwdHMvLi9leGFtcGxlL3NyYy9pbmRleC5qcz8yNGE3Il0sIm5hbWVzIjpbImNvbnNvbGUiLCJkb2N1bWVudCJdLCJtYXBwaW5ncyI6IkFBQUFBLE9BQU8sQ0FBUEEsR0FBQUEsQ0FBQUEsSUFBQUEsRUFDQUMsUUFBUSxDQUFSQSxJQUFBQSxDQUFBQSxTQUFBQSxDQUFBQSx1QkFBQUEiLCJzb3VyY2VzQ29udGVudCI6WyJjb25zb2xlLmxvZygxMTIyKTtcclxuZG9jdW1lbnQuYm9keS5pbm5lckhUTUwgPSAnPGgxPkhlbGxvIHdvcmxkITwvaDE+JztcclxuIl0sImZpbGUiOiI0MTMuanMiLCJzb3VyY2VSb290IjoiIn0=\n//# sourceURL=webpack-internal:///413\n&quot;</span>)&#125;)();</span><br></pre></td></tr></table></figure>
+
 <p>映射形式 <code>index.js?24a7:1</code></p>
 <p><strong>eval-cheap-source-map</strong></p>
 <p>类似 eval-source-map，但没有生成列映射(column mapping)，只是映射行数。它会忽略源自 loader 的 source map，并且仅显示转译后的代码。</p>
 <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(<span class="function">()=&gt;</span>&#123;<span class="built_in">eval</span>(<span class="string">&quot;console.log(1122);document.body.innerHTML=&#x27;&lt;h1&gt;Hello world!&lt;/h1&gt;&#x27;;//# sourceURL=[module]\n//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIndlYnBhY2s6Ly9AZG90bGltL3NjcmlwdHMvLi9leGFtcGxlL3NyYy9pbmRleC5qcz8yNGE3Il0sIm5hbWVzIjpbImNvbnNvbGUiLCJkb2N1bWVudCJdLCJtYXBwaW5ncyI6IkFBQUFBLE9BQU8sQ0FBUEEsR0FBQUEsQ0FBQUEsSUFBQUEsRUFDQUMsUUFBUSxDQUFSQSxJQUFBQSxDQUFBQSxTQUFBQSxDQUFBQSx1QkFBQUEiLCJzb3VyY2VzQ29udGVudCI6WyJjb25zb2xlLmxvZygxMTIyKTtcclxuZG9jdW1lbnQuYm9keS5pbm5lckhUTUwgPSAnPGgxPkhlbGxvIHdvcmxkITwvaDE+JztcclxuIl0sImZpbGUiOiI0MTMuanMiLCJzb3VyY2VSb290IjoiIn0=\n//# sourceURL=webpack-internal:///413\n&quot;</span>)&#125;)();</span><br></pre></td></tr></table></figure>
+
 <p>映射形式 <code>index.js?24a7:1 </code></p>
 <p><strong>eval-cheap-module-source-map</strong></p>
 <p>类似 eval-cheap-source-map，在这种情况下，源自 loader 的 source map 会得到更好的处理结果。</p>
 <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(<span class="function">()=&gt;</span>&#123;<span class="built_in">eval</span>(<span class="string">&quot;console.log(1122);document.body.innerHTML=&#x27;&lt;h1&gt;Hello world!&lt;/h1&gt;&#x27;;//# sourceURL=[module]\n//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIndlYnBhY2s6Ly9AZG90bGltL3NjcmlwdHMvLi9leGFtcGxlL3NyYy9pbmRleC5qcz8yNGE3Il0sIm5hbWVzIjpbImNvbnNvbGUiLCJkb2N1bWVudCJdLCJtYXBwaW5ncyI6IkFBQUFBLE9BQU8sQ0FBUEEsR0FBQUEsQ0FBQUEsSUFBQUEsRUFDQUMsUUFBUSxDQUFSQSxJQUFBQSxDQUFBQSxTQUFBQSxDQUFBQSx1QkFBQUEiLCJzb3VyY2VzQ29udGVudCI6WyJjb25zb2xlLmxvZygxMTIyKTtcclxuZG9jdW1lbnQuYm9keS5pbm5lckhUTUwgPSAnPGgxPkhlbGxvIHdvcmxkITwvaDE+JztcclxuIl0sImZpbGUiOiI0MTMuanMiLCJzb3VyY2VSb290IjoiIn0=\n//# sourceURL=webpack-internal:///413\n&quot;</span>)&#125;)();</span><br></pre></td></tr></table></figure>
+
 <p>映射形式 <code>index.js?24a7:1</code></p>
 <h3 id="特定场景"><a href="#特定场景" class="headerlink" title="特定场景"></a>特定场景</h3><p><strong>inline-source-map</strong></p>
 <p>source map 转换为 DataUrl 后添加到 bundle 中。</p>
 <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">console</span>.log(<span class="number">1122</span>),<span class="built_in">document</span>.body.innerHTML=<span class="string">&quot;&lt;h1&gt;Hello world!&lt;/h1&gt;&quot;</span>;</span><br><span class="line"><span class="comment">//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIndlYnBhY2s6Ly9AZG90bGltL3NjcmlwdHMvLi9leGFtcGxlL3NyYy9pbmRleC5qcyJdLCJuYW1lcyI6WyJjb25zb2xlIiwiZG9jdW1lbnQiXSwibWFwcGluZ3MiOiJBQUFBQSxrQkFDQUMiLCJmaWxlIjoianMvbWFpbi45Njc4ZjIwZS5qcyIsInNvdXJjZXNDb250ZW50IjpbImNvbnNvbGUubG9nKDExMjIpO1xyXG5kb2N1bWVudC5ib2R5LmlubmVySFRNTCA9ICc8aDE+SGVsbG8gd29ybGQhPC9oMT4nO1xyXG4iXSwic291cmNlUm9vdCI6IiJ9</span></span><br></pre></td></tr></table></figure>
+
 <p>映射形式 <code>index.js:1</code></p>
 <p><strong>cheap-source-map</strong></p>
 <p>没有列映射(column mapping)的 source map，忽略 loader source map。生成单独的 .map 文件。</p>
 <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">console</span>.log(<span class="number">1122</span>),<span class="built_in">document</span>.body.innerHTML=<span class="string">&quot;&lt;h1&gt;Hello world!&lt;/h1&gt;&quot;</span>;</span><br><span class="line"><span class="comment">//# sourceMappingURL=main.c20330fd.js.map</span></span><br></pre></td></tr></table></figure>
+
 <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;<span class="string">&quot;version&quot;</span>:<span class="number">3</span>,<span class="string">&quot;file&quot;</span>:<span class="string">&quot;js/main.c20330fd.js&quot;</span>,<span class="string">&quot;sources&quot;</span>:[<span class="string">&quot;webpack://@dotlim/scripts/js/main.c20330fd.js&quot;</span>],<span class="string">&quot;sourcesContent&quot;</span>:[<span class="string">&quot;console.log(1122),document.body.innerHTML=\&quot;&lt;h1&gt;Hello world!&lt;/h1&gt;\&quot;;&quot;</span>],<span class="string">&quot;mappings&quot;</span>:<span class="string">&quot;AAAA&quot;</span>,<span class="string">&quot;sourceRoot&quot;</span>:<span class="string">&quot;&quot;</span>&#125;</span><br></pre></td></tr></table></figure>
+
 <p>映射形式 <code>main.c20330fd.js:1</code></p>
 <p><strong>inline-cheap-source-map</strong></p>
 <p>类似 cheap-source-map，但是 source map 转换为 DataURL 添加到 bundle 中。</p>
 <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">console</span>.log(<span class="number">1122</span>),<span class="built_in">document</span>.body.innerHTML=<span class="string">&quot;&lt;h1&gt;Hello world!&lt;/h1&gt;&quot;</span>;</span><br><span class="line"><span class="comment">//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoianMvbWFpbi45Njc4ZjIwZS5qcyIsInNvdXJjZXMiOlsid2VicGFjazovL0Bkb3RsaW0vc2NyaXB0cy9qcy9tYWluLjk2NzhmMjBlLmpzIl0sInNvdXJjZXNDb250ZW50IjpbImNvbnNvbGUubG9nKDExMjIpLGRvY3VtZW50LmJvZHkuaW5uZXJIVE1MPVwiPGgxPkhlbGxvIHdvcmxkITwvaDE+XCI7Il0sIm1hcHBpbmdzIjoiQUFBQSIsInNvdXJjZVJvb3QiOiIifQ==</span></span><br></pre></td></tr></table></figure>
+
 <p>映射形式 <code>main.9678f20e.js:1</code></p>
 <p><strong>cheap-module-source-map</strong></p>
 <p>没有列映射(column mapping)的 source map，将 loader source map 简化为每行一个映射(mapping)。</p>
 <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">console</span>.log(<span class="number">1122</span>),<span class="built_in">document</span>.body.innerHTML=<span class="string">&quot;&lt;h1&gt;Hello world!&lt;/h1&gt;&quot;</span>;</span><br><span class="line"><span class="comment">//# sourceMappingURL=main.c20330fd.js.map</span></span><br></pre></td></tr></table></figure>
+
 <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;<span class="string">&quot;version&quot;</span>:<span class="number">3</span>,<span class="string">&quot;file&quot;</span>:<span class="string">&quot;js/main.c20330fd.js&quot;</span>,<span class="string">&quot;sources&quot;</span>:[<span class="string">&quot;webpack://@dotlim/scripts/js/main.c20330fd.js&quot;</span>],<span class="string">&quot;mappings&quot;</span>:<span class="string">&quot;AACA&quot;</span>,<span class="string">&quot;sourceRoot&quot;</span>:<span class="string">&quot;&quot;</span>&#125;</span><br></pre></td></tr></table></figure>
+
 <p>映射形式 <code>main.c20330fd.js:2</code> 【靓仔疑惑??不准】</p>
 <p><strong>inline-cheap-module-source-map</strong></p>
 <p>类似 cheap-module-source-map，但是 source map 转换为 DataURL 添加到 bundle 中。</p>
 <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">console</span>.log(<span class="number">1122</span>),<span class="built_in">document</span>.body.innerHTML=<span class="string">&quot;&lt;h1&gt;Hello world!&lt;/h1&gt;&quot;</span>;</span><br><span class="line"><span class="comment">//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoianMvbWFpbi45Njc4ZjIwZS5qcyIsInNvdXJjZXMiOlsid2VicGFjazovL0Bkb3RsaW0vc2NyaXB0cy9qcy9tYWluLjk2NzhmMjBlLmpzIl0sIm1hcHBpbmdzIjoiQUFDQSIsInNvdXJjZVJvb3QiOiIifQ==</span></span><br></pre></td></tr></table></figure>
+
 <p>映射形式 <code>main.9678f20e.js:2</code></p>
 <h3 id="对于生产环境"><a href="#对于生产环境" class="headerlink" title="对于生产环境"></a>对于生产环境</h3><p><strong>source-map</strong></p>
 <p>整个 source map 作为一个单独的文件生成。它为 bundle 添加了一个引用注释，以便开发工具知道在哪里可以找到它。</p>
 <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">console</span>.log(<span class="number">1122</span>),<span class="built_in">document</span>.body.innerHTML=<span class="string">&quot;&lt;h1&gt;Hello world!&lt;/h1&gt;&quot;</span>;</span><br><span class="line"><span class="comment">//# sourceMappingURL=main.c20330fd.js.map</span></span><br></pre></td></tr></table></figure>
+
 <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;<span class="string">&quot;version&quot;</span>:<span class="number">3</span>,<span class="string">&quot;sources&quot;</span>:[<span class="string">&quot;webpack://@dotlim/scripts/./example/src/index.js&quot;</span>],<span class="string">&quot;names&quot;</span>:[<span class="string">&quot;console&quot;</span>,<span class="string">&quot;document&quot;</span>],<span class="string">&quot;mappings&quot;</span>:<span class="string">&quot;AAAAA,kBACAC&quot;</span>,<span class="string">&quot;file&quot;</span>:<span class="string">&quot;js/main.c20330fd.js&quot;</span>,<span class="string">&quot;sourcesContent&quot;</span>:[<span class="string">&quot;console.log(1122);\r\ndocument.body.innerHTML = &#x27;&lt;h1&gt;Hello world!&lt;/h1&gt;&#x27;;\r\n&quot;</span>],<span class="string">&quot;sourceRoot&quot;</span>:<span class="string">&quot;&quot;</span>&#125;</span><br></pre></td></tr></table></figure>
+
 <p><strong>hidden-source-map</strong></p>
 <p>与 source-map 相同，但不会为 bundle 添加引用注释。</p>
 <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">console</span>.log(<span class="number">1122</span>),<span class="built_in">document</span>.body.innerHTML=<span class="string">&quot;&lt;h1&gt;Hello world!&lt;/h1&gt;&quot;</span>;</span><br></pre></td></tr></table></figure>
+
 <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;<span class="string">&quot;version&quot;</span>:<span class="number">3</span>,<span class="string">&quot;sources&quot;</span>:[<span class="string">&quot;webpack://@dotlim/scripts/./example/src/index.js&quot;</span>],<span class="string">&quot;names&quot;</span>:[<span class="string">&quot;console&quot;</span>,<span class="string">&quot;document&quot;</span>],<span class="string">&quot;mappings&quot;</span>:<span class="string">&quot;AAAAA,kBACAC&quot;</span>,<span class="string">&quot;file&quot;</span>:<span class="string">&quot;js/main.d211ed7f.js&quot;</span>,<span class="string">&quot;sourcesContent&quot;</span>:[<span class="string">&quot;console.log(1122);\r\ndocument.body.innerHTML = &#x27;&lt;h1&gt;Hello world!&lt;/h1&gt;&#x27;;\r\n&quot;</span>],<span class="string">&quot;sourceRoot&quot;</span>:<span class="string">&quot;&quot;</span>&#125;</span><br></pre></td></tr></table></figure>
+
 <p>映射形式 <code>main.d211ed7f.js:1</code></p>
 <p><strong>nosources-source-map</strong></p>
 <p>创建的 source map 不包含 <code>sourcesContent</code>。它可以用来映射客户端上的堆栈跟踪，而无须暴露所有的源代码。</p>
 <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">console</span>.log(<span class="number">1122</span>),<span class="built_in">document</span>.body.innerHTML=<span class="string">&quot;&lt;h1&gt;Hello world!&lt;/h1&gt;&quot;</span>;</span><br><span class="line"><span class="comment">//# sourceMappingURL=main.c20330fd.js.map</span></span><br></pre></td></tr></table></figure>
+
 <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;<span class="string">&quot;version&quot;</span>:<span class="number">3</span>,<span class="string">&quot;sources&quot;</span>:[<span class="string">&quot;webpack://@dotlim/scripts/./example/src/index.js&quot;</span>],<span class="string">&quot;names&quot;</span>:[<span class="string">&quot;console&quot;</span>,<span class="string">&quot;document&quot;</span>],<span class="string">&quot;mappings&quot;</span>:<span class="string">&quot;AAAAA,kBACAC&quot;</span>,<span class="string">&quot;file&quot;</span>:<span class="string">&quot;js/main.c20330fd.js&quot;</span>,<span class="string">&quot;sourceRoot&quot;</span>:<span class="string">&quot;&quot;</span>&#125;</span><br></pre></td></tr></table></figure>
+
 <p>映射形式 <code>index.js:1</code></p>
 
   </div>
