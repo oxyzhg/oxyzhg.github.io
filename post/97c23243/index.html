@@ -14,7 +14,7 @@
 <meta property="og:description" content="在 Compiler 和 Compilation 的工作流程中耗时分析：  对于 Compiler 实例而言，耗时最长的显然是生成编译过程实例后的 make 阶段，在这个阶段里，会执行模块编译到优化的完整过程。 对于 Compilation 实例的工作流程来说，不同的项目和配置各有不同，但总体而言，编译模块和后续优化阶段的生成产物并压缩代码的过程都是比较耗时的。  不同项目的构建，在整个流程的前期">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2020-12-11T09:04:45.000Z">
-<meta property="article:modified_time" content="2021-02-27T09:00:00.640Z">
+<meta property="article:modified_time" content="2021-09-17T07:32:49.221Z">
 <meta property="article:author" content="Oxyzhg">
 <meta property="article:tag" content="源码">
 <meta property="article:tag" content="webpack">
@@ -175,7 +175,7 @@
 </ol>
 <h3 id="减少执行编译的模块"><a href="#减少执行编译的模块" class="headerlink" title="减少执行编译的模块"></a>减少执行编译的模块</h3><p>如果一个项目每次构建都需要编译 1000 个模块，但是通过分析后发现其中有 500 个不需要编译，显而易见，经过优化后，构建效率可以大幅提升。</p>
 <h4 id="IgnorePlugin"><a href="#IgnorePlugin" class="headerlink" title="IgnorePlugin"></a>IgnorePlugin</h4><p>有的依赖包，除了项目所需的模块内容外，还会附带一些多余的模块。典型的例子是 moment 这个包，一般情况下在构建时会自动引入其 locale 目录下的多国语言包，但对于大多数情况而言，项目中只需要引入本国语言包即可。而 Webpack 提供的 IgnorePlugin 即可在构建模块时直接剔除那些需要被排除的模块，从而提升构建模块的速度，并减少产物体积。</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> config = &#123;</span><br><span class="line">  plugins: [</span><br><span class="line">    <span class="keyword">new</span> webpack.IgnorePlugin(&#123;</span><br><span class="line">      resourceRegExp: <span class="regexp">/^\.\/locale$/</span>,</span><br><span class="line">      contextRegExp: <span class="regexp">/moment$/</span>,</span><br><span class="line">    &#125;),</span><br><span class="line">  ],</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> config = &#123;</span><br><span class="line">  <span class="attr">plugins</span>: [</span><br><span class="line">    <span class="keyword">new</span> webpack.IgnorePlugin(&#123;</span><br><span class="line">      <span class="attr">resourceRegExp</span>: <span class="regexp">/^\.\/locale$/</span>,</span><br><span class="line">      contextRegExp: <span class="regexp">/moment$/</span>,</span><br><span class="line">    &#125;),</span><br><span class="line">  ],</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
 
 <h4 id="按需引入类库模块"><a href="#按需引入类库模块" class="headerlink" title="按需引入类库模块"></a>按需引入类库模块</h4><p>这种方式一般适用于工具类库性质的依赖包的优化，典型例子是 lodash 依赖包。要解决这个问题，效果最佳的方式是在导入声明时只导入依赖包内的特定模块。除了在导入时声明特定模块之外，还可以使用 babel-plugin-lodash 或 babel-plugin-import 等插件达到同样的效果。</p>
 <blockquote>

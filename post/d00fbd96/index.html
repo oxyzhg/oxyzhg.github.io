@@ -14,7 +14,7 @@
 <meta property="og:description" content="写在前面现今的 web 开发通过前后端分离的技术拆分为了 web 后端开发与 web 前端开发，值得指出的是，web 前端开发早已不是传统意义上的开发模式了，转而变成了 web 客户端开发，有过客户端开发经验的同学应该知道这两者间的差别，客户端开发关注的是：  应用的生命周期 组件化 开发模式与打包方法  组件化是客户端开发最重要的内容，设计一套复用度高、扩展性好的组件系统，可以显著提高开发效率，">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2020-10-09T01:39:26.000Z">
-<meta property="article:modified_time" content="2021-02-27T09:00:00.640Z">
+<meta property="article:modified_time" content="2021-09-17T07:32:49.221Z">
 <meta property="article:author" content="Oxyzhg">
 <meta property="article:tag" content="vue">
 <meta property="article:tag" content="组件化">
@@ -188,7 +188,7 @@
 </tr>
 </tbody></table>
 <p>接下来，我们简单使用一下这个组件：</p>
-<figure class="highlight jsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> note = &#123;</span><br><span class="line"> title: <span class="string">&#x27;聊聊如何设计组件&#x27;</span>,</span><br><span class="line"> content: <span class="string">&#x27;&#x27;</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">&lt;Note data=&#123;note&#125; /&gt;</span><br></pre></td></tr></table></figure>
+<figure class="highlight jsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> note = &#123;</span><br><span class="line"> <span class="attr">title</span>: <span class="string">&#x27;聊聊如何设计组件&#x27;</span>,</span><br><span class="line"> <span class="attr">content</span>: <span class="string">&#x27;&#x27;</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">&lt;Note data=&#123;note&#125; /&gt;</span><br></pre></td></tr></table></figure>
 
 <p>这样，一个最简 api 的笔记组件就搞定了，它的接口非常简单，只需要提供一个 data 属性，就可以展示出笔记内容，并且可以点击编辑进入书写状态。</p>
 <p>一般而言，如果没有更多的需求的话，我们的笔记组件设计到这里也就可以了。<strong>在设计组件时，务必遵循最小化原则，即尽可能少地抛出接口。</strong>因为使用组件的用户可能有很多，一旦组件作者不小心抛出了一个不合理的接口，以后想要修改就几乎不可能了（只能通过标记过时的方法提醒用户，但这种做法往往是无奈之举）。</p>
@@ -263,7 +263,7 @@
 </tr>
 </tbody></table>
 <p>调用者可能在捕捉到模式切换事件时，做一些特定的工作：</p>
-<figure class="highlight jsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> handleModeChange = <span class="function">(<span class="params"><span class="keyword">from</span>, to</span>) =&gt;</span> &#123;&#125;;</span><br><span class="line">&lt;Note onModeChange=&#123;handleModeChange&#125; /&gt;;</span><br></pre></td></tr></table></figure>
+<figure class="highlight jsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> handleModeChange = <span class="function">(<span class="params"><span class="keyword">from</span>, to</span>) =&gt;</span> &#123;&#125;;</span><br><span class="line"><span class="xml"><span class="tag">&lt;<span class="name">Note</span> <span class="attr">onModeChange</span>=<span class="string">&#123;handleModeChange&#125;</span> /&gt;</span></span>;</span><br></pre></td></tr></table></figure>
 
 <h3 id="更多的支持"><a href="#更多的支持" class="headerlink" title="更多的支持"></a>更多的支持</h3><p>除了扩展组件的能力外，我们还可以扩展组件的视图。比如笔记的工具栏，我们可以通过 api 拓展而渲染出来，这就是组件的<strong>子视图设计</strong>，在 web 前端的组件化中，称为<strong>插槽</strong>。我们可以为笔记组件扩展一个工具栏的插槽：</p>
 <table>
